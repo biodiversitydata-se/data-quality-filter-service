@@ -1,0 +1,62 @@
+/*
+ * Copyright (C) 2014 Atlas of Living Australia
+ * All Rights Reserved.
+ *
+ * The contents of this file are subject to the Mozilla Public
+ * License Version 1.1 (the "License"); you may not use this file
+ * except in compliance with the License. You may obtain a copy of
+ * the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS
+ * IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or
+ * implied. See the License for the specific language governing
+ * rights and limitations under the License.
+ */
+
+package au.org.ala.dataqualityfilter
+
+import grails.converters.JSON
+import grails.core.GrailsApplication
+
+/**
+ * Generate codes and metadata for the data quality checks.
+ * Data is stored in the <a href="https://docs.google.com/spreadsheet/pub?key=0AjNtzhUIIHeNdHJOYk1SYWE4dU1BMWZmb2hiTjlYQlE">Data
+ * Quality Checks Google spreadsheet</a>
+ */
+class DataQualityController {
+    GrailsApplication grailsApplication
+    def webServicesService
+    def qualityService
+
+    static responseFormats = [
+            list: ['json']
+    ]
+
+    def index() {
+        redirect action: "allCodes"
+    }
+
+    def allCodes() {
+        render webServicesService.getAllCodes() as JSON
+    }
+
+    def list() {
+        def profileName = params['profile']
+        def flatten = params.boolean('flatten', false)
+        def categories = qualityService.getEnabledCategoriesAndFilters(profileName)
+
+        if (flatten) {
+//            respond categories.collectMany { it.value*.filter }
+//            respond categories.collect { it.value*.filter.join(' AND ') }
+            respond categories.collectMany { category, filters ->
+                filters.collect { filter -> [ filter: filter.filter, category: category.label, title: filter.description ] }
+            }
+        } else {
+//            respond categories.collect { it.value*.filter }
+//            respond categories.collectEntries { category, filters -> [(category.label): filters*.filter.join (' AND ')] }
+//            respond categories.collectEntries { category, filters -> [(category.label): filters*.filter] }
+            respond categories.collectEntries { category, filters -> [(category.label): filters.collect { [filter: it.filter, title: it.description] } ] }
+        }
+    }
+
+}
