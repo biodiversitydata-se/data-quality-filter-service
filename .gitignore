@@ -1,0 +1,11 @@
+out/*
+target/*
+.idea/*
+*.iml
+wrapper/*
+.slcache/*
+build/*
+.gradle/*
+.DS_Store
+logs/*
+
