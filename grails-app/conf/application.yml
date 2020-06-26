@@ -5,7 +5,7 @@ grails:
         defaultPackage: au.org.ala.dataqualityfilter
     config:
         locations:
-            - file:/data/dataquality-filter/config/dataquality-filter.properties
+            - file:/data/data-quality-filter-service/config/data-quality-filter-service.properties
     spring:
         transactionManagement:
             proxies: false
@@ -126,7 +126,7 @@ hibernate:
         use_second_level_cache: false
         use_query_cache: false
 database:
-    directory: "/data/dataquality-filter/database"
+    directory: "/data/data-quality-filter-service/database"
 
 dataSource:
     pooled: true
