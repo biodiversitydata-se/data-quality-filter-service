@@ -11,7 +11,7 @@ buildscript {
     }
 }
 
-version "0.1"
+version "1.0.0-SNAPSHOT"
 group "au.org.ala"
 
 apply plugin:"eclipse"
@@ -20,6 +20,11 @@ apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
+
+apply from: 'https://raw.githubusercontent.com/AtlasOfLivingAustralia/travis-build-configuration/master/travis_grails_publish.gradle'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenLocal()
