@@ -148,12 +148,12 @@ security:
 
 server:
     contextPath: '/dataquality-filter'
-    port: 8090
+    port: 8080
 
 environments:
     development:
         grails:
-            serverURL: "http://dev.ala.org.au:8090/dataquality-filter"
+            serverURL: "http://dev.ala.org.au:8080/dataquality-filter"
         security:
             cas:
                 appServerName: "https://auth.ala.org.au"
@@ -162,8 +162,6 @@ environments:
             cas:
                 appServerName: "https://auth.ala.org.au"
     production:
-        grails:
-            serverURL: "https://biocache.ala.org.au"
         security:
             cas:
                 appServerName: "https://auth.ala.org.au"
