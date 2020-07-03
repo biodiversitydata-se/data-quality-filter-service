@@ -5,7 +5,7 @@ grails:
         defaultPackage: au.org.ala.dataqualityfilter
     config:
         locations:
-            - file:/data/data-quality-filter-service/config/data-quality-filter-service.properties
+            - file:/data/data-quality-filter-service/config/data-quality-filter-service-config.properties
     spring:
         transactionManagement:
             proxies: false
