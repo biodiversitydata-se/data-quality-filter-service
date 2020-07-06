@@ -21,6 +21,8 @@ class QualityCategory {
     static belongsTo = [ qualityProfile: QualityProfile ]
     static hasMany = [ qualityFilters: QualityFilter ]
 
+    static graphql = true
+
     static constraints = {
         qualityProfile nullable: true // TODO remove once migrated
         name unique: ['qualityProfile']

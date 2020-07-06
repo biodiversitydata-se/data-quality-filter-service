@@ -2,7 +2,7 @@ package au.org.ala.dataqualityfilter
 
 import grails.converters.JSON
 
-class DataQualityFilterBootStrap {
+class BootStrap {
     def init = { servletContext ->
         QualityProfile.withTransaction {
             def qp = QualityProfile.first()

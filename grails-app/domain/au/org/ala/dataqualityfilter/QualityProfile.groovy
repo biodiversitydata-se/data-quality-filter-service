@@ -24,6 +24,8 @@ class QualityProfile {
 
     static hasMany = [categories: QualityCategory]
 
+    static graphql = true
+
     static constraints = {
         name unique: true, blank: false, nullable: false
         shortName unique: true, blank: false, nullable: false

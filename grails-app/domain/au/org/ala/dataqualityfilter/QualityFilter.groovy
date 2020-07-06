@@ -19,7 +19,7 @@ class QualityFilter {
 
     static belongsTo = [ qualityCategory: QualityCategory ]
 
-    static transients = ['filterQueryPart']
+    static graphql = true
 
     static constraints = {
         filter blank: false, unique: ['qualityCategory']
@@ -29,10 +29,6 @@ class QualityFilter {
         enabled defaultValue: 'true', index: 'quality_filter_enabled_idx'
         dateCreated index: 'quality_filter_date_created_idx'
         sort 'dateCreated'
-    }
-
-    String getFilterQueryPart() {
-        return filter
     }
 
 }

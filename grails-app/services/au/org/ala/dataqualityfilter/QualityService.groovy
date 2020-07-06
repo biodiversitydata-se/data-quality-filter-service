@@ -5,8 +5,8 @@ import com.google.common.cache.Cache
 import com.google.common.cache.CacheBuilder
 import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
-import grails.transaction.NotTransactional
-import grails.transaction.Transactional
+import grails.gorm.transactions.NotTransactional
+import grails.gorm.transactions.Transactional
 import org.apache.lucene.queryparser.flexible.precedence.PrecedenceQueryParser
 import org.apache.lucene.search.BooleanClause
 import org.apache.lucene.search.BooleanQuery
@@ -321,6 +321,7 @@ class QualityService {
      * @return fields (List)
      */
     @Cacheable('longTermCache')
+    @NotTransactional
     List getBiocacheFields()  {
         List fields
         def url = grailsApplication.config.getProperty('biocache.indexedFieldsUrl', String)
@@ -347,11 +348,27 @@ class QualityService {
      * }
      *
      */
+    @NotTransactional
     def getBiocacheField(String field) {
         def baseUrl = grailsApplication.config.getProperty('biocache.indexedFieldsUrl', String)
         def url = UriComponentsBuilder.fromUriString(baseUrl).queryParam('fl', field).toUriString()
         def resp = webServicesService.getJsonElements(url)
         if (resp instanceof JSONArray && resp.length() > 0) resp = resp[0]
         resp
+    }
+
+    QualityCategory findCategoryByProfileAndId(Serializable profileId, Serializable id) {
+        def qp
+        if (profileId == 'default') {
+            qp = defaultProfile
+        } else {
+            qp = QualityProfile.get(profileId)
+        }
+        QualityCategory.findByQualityProfileAndId(qp, id)
+    }
+
+    QualityFilter findFilterByProfileAndCategoryAndId(Serializable profileId, Serializable categoryId, Serializable id) {
+        def qc = findCategoryByProfileAndId(profileId, categoryId)
+        QualityFilter.findByQualityCategoryAndId(qc, id)
     }
 }

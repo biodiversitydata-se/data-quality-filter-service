@@ -5,7 +5,9 @@ grails:
         defaultPackage: au.org.ala.dataqualityfilter
     config:
         locations:
+            - file:/data/data-quality-filter-service/config/data-quality-filter-service-config.yml
             - file:/data/data-quality-filter-service/config/data-quality-filter-service-config.properties
+            - file:/data/data-quality-filter-service/config/data-quality-filter-service-config.groovy
     spring:
         transactionManagement:
             proxies: false
@@ -33,11 +35,7 @@ grails:
         disable:
             accept:
                 header:
-                    userAgents: #The ACCEPT header will not be used for content negotiation for user agents containing the following strings (defaults to the 4 major rendering engines)
-                        - 'Gecko'
-                        - 'WebKit'
-                        - 'Presto'
-                        - 'Trident'
+                    userAgents: false
         types: # the first one is the default format
             all: '*/*' # 'all' maps to '*' or the first available format in withFormat
             atom: application/atom+xml
@@ -113,12 +111,30 @@ endpoints:
         unique-names: true
 
 skin:
-    layout: "main"
+    fluidLayout: true
+    layout: "ala-main"
     orgNameLong: "Atlas of Living Australia"
     orgNameShort: "ALA"
 
 privacyPolicy: "http://www.ala.org.au/about/terms-of-use/privacy-policy/"
 
+swagger:
+    info:
+        description: "RESTful and RPC API for the Data Quality Filters service"
+        version: "${info.app.version}"
+        title: "Data Quality Services API"
+        termsOfServices: "https://www.ala.org.au/terms-of-use"
+        contact:
+            name: "Atlas Of Living Australia"
+            url: "http://www.ala.org.au"
+            email: "support@ala.org.au"
+        license:
+            name: "MPL"
+            url: 'https://www.mozilla.org/en-US/MPL/'
+    schemes:
+    - HTTPS
+    consumes:
+    - "application/json"
 
 hibernate:
     cache:
