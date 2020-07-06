@@ -1,0 +1,118 @@
+/*!* ALA CSS file *!*/
+body.fluid #breadcrumb .breadcrumb-list {
+    margin-left: 15px;
+}
+
+.toggleResponsive {
+    display: none;
+}
+
+#main #main-content {
+    /*margin-top: 10px;*/
+    margin-bottom: 5em;
+}
+
+#listHeader h1 {
+    margin: 20px 0 15px 0;
+    font-size: 26px;
+}
+
+.explore-your-area #header #breadcrumb { display: none; }
+
+/*#content .nav-tabs li:not(.active)  a {*/
+    /*background-color: #f2f2f2;*/
+/*}*/
+
+.rowA {
+    margin-bottom: 2px;
+}
+
+body #main-content #customiseFacetsButton > .dropdown-menu, #main-content #resultsReturned .dropdown-menu {
+    background-color: white;
+}
+
+/* Leaflet overrides */
+#main-content .leaflet-container a {
+    color: #C44D34;
+}
+
+#main-content .leaflet-bar a.leaflet-disabled, #main-content .leaflet-bar a.leaflet-disabled:hover {
+    color: #bbb;
+}
+
+#main-content .leaflet-container a.leaflet-popup-close-button {
+    color: #999;
+}
+
+#main-content .leaflet-bar a, #main-content .leaflet-bar a:hover,  #main-content a.colour-by-legend-toggle {
+    color: black;
+}
+
+#outageMessage {
+    font-size: 18px;
+    border: 4px solid #df4a21;
+    display: table;
+    margin: 0 auto;
+    min-width: 50%;
+}
+
+#currentFilter span.checkbox-unchecked {
+    background: url('images/checkbox-unchecked.png') no-repeat left top;
+}
+
+#currentFilter span.checkbox-checked {
+    background: url('images/checkbox-checked.png') no-repeat left top;
+}
+
+/*.table-bordered {*/
+    /*border: 1px solid #ddd;*/
+/*}*/
+/*.table-bordered > thead > tr > th,*/
+/*.table-bordered > tbody > tr > th,*/
+/*.table-bordered > tfoot > tr > th,*/
+/*.table-bordered > thead > tr > td,*/
+/*.table-bordered > tbody > tr > td,*/
+/*.table-bordered > tfoot > tr > td {*/
+    /*border: 1px solid #ddd;*/
+/*}*/
+
+.well {
+    background-image:none;
+}
+
+/* anchor offset for floating header */
+:target:before {
+    content:"";
+    display:block;
+    height:94px; /* fixed header height*/
+    margin:-94px 0 0; /* negative fixed header height */
+}
+
+.breadcrumb-list {
+    margin-left: 25px;
+}
+
+
+/* Media rules */
+@media only screen and (max-width : 992px) {
+    body > #main-content {
+        margin-top: 60px;
+    }
+}
+
+@media only screen and (max-width : 768px) {
+    body > #main-content {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media only screen and (max-width : 480px) {
+    body > #main-content {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+    input#taxaQuery {
+        width: 50%;
+    }
+}
