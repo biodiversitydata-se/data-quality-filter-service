@@ -165,9 +165,9 @@ class AdminDataQualityController {
             response.setHeader('Content-Disposition', 'attachment; filename=' + fileName + '.json')
             response.setContentType("text");
 
-            def json = profile as JSON
-            json.prettyPrint = true
-            json.render response
+            JSON.use('exportProfile', {
+                render profile as JSON
+            })
         }
     }
 

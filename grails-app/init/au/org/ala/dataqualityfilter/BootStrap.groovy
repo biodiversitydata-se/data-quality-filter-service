@@ -14,8 +14,41 @@ class BootStrap {
             }
         }
 
+        JSON.createNamedConfig('exportProfile') {
+            // Set pretty print
+            it.setPrettyPrint(true)
+            it.registerObjectMarshaller(QualityProfile) { QualityProfile profile ->
+                [
+                    name        : profile.name,
+                    shortName   : profile.shortName,
+                    description : profile.description,
+                    contactName : profile.contactName,
+                    contactEmail: profile.contactEmail,
+                    categories  : profile.categories
+                ]
+            }
+            it.registerObjectMarshaller(QualityCategory) { QualityCategory category ->
+                [
+                    enabled     : category.enabled,
+                    name        : category.name,
+                    label       : category.label,
+                    description : category.description,
+                    qualityFilters  : category.qualityFilters
+                ]
+            }
+
+            it.registerObjectMarshaller(QualityFilter) { QualityFilter filter ->
+                [
+                    enabled     : filter.enabled,
+                    description : filter.description,
+                    filter      : filter.filter
+                ]
+            }
+        }
+
         JSON.registerObjectMarshaller(QualityProfile) {
             def output = [:]
+            output['id'] = it.id
             output['name'] = it.name
             output['shortName'] = it.shortName
             output['description'] = it.description
@@ -27,6 +60,7 @@ class BootStrap {
 
         JSON.registerObjectMarshaller(QualityCategory) {
             def output = [:]
+            output['id'] = it.id
             output['enabled'] = it.enabled
             output['name'] = it.name
             output['label'] = it.label
@@ -37,6 +71,7 @@ class BootStrap {
 
         JSON.registerObjectMarshaller(QualityFilter) {
             def output = [:]
+            output['id'] = it.id
             output['enabled'] = it.enabled
             output['description'] = it.description
             output['filter'] = it.filter
