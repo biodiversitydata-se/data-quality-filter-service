@@ -13,6 +13,8 @@ import static javax.servlet.http.HttpServletResponse.SC_OK
 @Api(value = "/api/v1/", tags = ["profiles"], description = "Data Quality RESTful API for Quality Profiles")
 class QualityProfileController extends RestfulController<QualityProfile> {
 
+    static responseFormats = ['json']
+
     def qualityService
 
     QualityProfileController() {
