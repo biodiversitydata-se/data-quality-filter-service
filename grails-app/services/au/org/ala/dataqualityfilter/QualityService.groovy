@@ -363,14 +363,33 @@ class QualityService {
         resp
     }
 
-    QualityCategory findCategoryByProfileAndId(Serializable profileId, Serializable id) {
+    QualityProfile findQualityProfileById(Serializable profileId) {
         def qp
         if (profileId == 'default') {
             qp = defaultProfile
-        } else {
+        } else if (profileId instanceof Long || profileId instanceof Integer) {
             qp = QualityProfile.get(profileId)
+        } else if (profileId instanceof String && profileId.isLong()) {
+            qp = QualityProfile.get(profileId.toLong())
+        } else if (profileId instanceof String) {
+            qp = QualityProfile.findByShortName(profileId)
         }
+        return qp
+    }
+
+    List<QualityCategory> findCategoriesByProfile(Serializable profileId) {
+        def qp = findQualityProfileById(profileId)
+        qp?.categories as List
+    }
+
+    QualityCategory findCategoryByProfileAndId(Serializable profileId, Serializable id) {
+        def qp = findQualityProfileById(profileId)
         QualityCategory.findByQualityProfileAndId(qp, id)
+    }
+
+    List<QualityFilter> findFiltersByProfileAndCategory(Serializable profileId, Serializable categoryId) {
+        def qc = findCategoryByProfileAndId(profileId, categoryId)
+        qc?.qualityFilters as List
     }
 
     QualityFilter findFilterByProfileAndCategoryAndId(Serializable profileId, Serializable categoryId, Serializable id) {

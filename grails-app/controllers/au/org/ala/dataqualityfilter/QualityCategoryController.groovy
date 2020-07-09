@@ -22,7 +22,12 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
 
     @Override
     protected QualityCategory queryForResource(Serializable id) {
-        return qualityService.findCategoryByProfileAndId(params.profileId, id)
+        return qualityService.findCategoryByProfileAndId(params.qualityProfileId, id)
+    }
+
+    @Override
+    protected List<QualityCategory> listAllResources(Map params) {
+        return qualityService.findCategoriesByProfile(params.qualityProfileId)
     }
 
     @ApiOperation(
@@ -35,7 +40,7 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityCategory, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileId", paramType = "path", required = false, value = "The id for the quality profile or default for the default profile", dataType = 'string'),
+            @ApiImplicitParam(name = "profileId", paramType = "path", required = false, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string'),
             @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer')
     ])
     def index(Integer max) {
@@ -52,7 +57,7 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileId", paramType = "path", required = false, value = "The id for the quality profile or default for the default profile", dataType = 'string'),
+            @ApiImplicitParam(name = "profileId", paramType = "path", required = false, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string'),
             @ApiImplicitParam(name = "id", paramType = "path", required = false, value = "The id for the quality category", dataType = 'integer'),
             @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer')
     ])
