@@ -106,7 +106,7 @@ class QualityController {
     @ApiOperation(
             value = "Get the full filter string for a given quality qualityProfile",
             nickname = "getJoinedQualityFilter",
-            produces = "application/json",
+            produces = "text/plain",
             httpMethod = "GET"
     )
     @ApiResponses([
@@ -116,23 +116,28 @@ class QualityController {
             @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
     ])
     def getJoinedQualityFilter(String profileName) {
-        render qualityService.getJoinedQualityFilter(profileName)
+        render qualityService.getJoinedQualityFilter(profileName), contentType: 'text/plain'
     }
 
     @ApiOperation(
             value = "Get the full inverse filter string for a given quality qualityProfile",
             nickname = "getInverseCategoryFilter",
-            produces = "application/json",
+            produces = "text/plain",
             httpMethod = "GET"
     )
     @ApiResponses([
             @ApiResponse(code = SC_OK, message = "OK", response = String)
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "qualityCategoryId", paramType = "query", required = false, value = "Quality Category Id", dataType = 'integer')
     ])
-    def getInverseCategoryFilter(QualityCategory category) {
-        render qualityService.getInverseCategoryFilter(category)
+    def getInverseCategoryFilter() {
+        def result = qualityService.getInverseCategoryFilter(params.long('qualityCategoryId'))
+        if (result == null) {
+            render '', contentType: 'text/plain', status: 404
+        } else {
+            render result, contentType: 'text/plain'
+        }
     }
 
 }

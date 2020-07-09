@@ -181,6 +181,12 @@ class QualityService {
     }
 
     @Transactional(readOnly = true)
+    String getInverseCategoryFilter(Long categoryId) {
+        def qc = QualityCategory.get(categoryId)
+        qc ? getInverseCategoryFilter(qc) : null
+    }
+
+    @Transactional(readOnly = true)
     String getInverseCategoryFilter(QualityCategory category) {
         PrecedenceQueryParser qp = new PrecedenceQueryParser()
         TermQuery
