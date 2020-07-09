@@ -163,13 +163,13 @@ security:
         uriExclusionFilterPattern: '/occurrences/shapeUpload,/images.*,/css.*,/js.*,.*json,/help/.*'
 
 server:
-    contextPath: '/dataquality-filter'
+    contextPath: '/data-quality'
     port: 8080
 
 environments:
     development:
         grails:
-            serverURL: "http://dev.ala.org.au:8080/dataquality-filter"
+            serverURL: "http://dev.ala.org.au:8080/data-quality"
         security:
             cas:
                 appServerName: "https://auth.ala.org.au"
