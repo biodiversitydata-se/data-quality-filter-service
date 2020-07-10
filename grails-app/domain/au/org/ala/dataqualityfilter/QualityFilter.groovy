@@ -19,8 +19,6 @@ class QualityFilter {
 
     static belongsTo = [ qualityCategory: QualityCategory ]
 
-    static graphql = true
-
     static constraints = {
         filter blank: false, unique: ['qualityCategory']
     }

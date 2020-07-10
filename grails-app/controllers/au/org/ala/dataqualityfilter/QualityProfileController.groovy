@@ -26,6 +26,11 @@ class QualityProfileController extends RestfulController<QualityProfile> {
         return qualityService.findProfileById(id)
     }
 
+    @Override
+    protected List<QualityProfile> listAllResources(Map params) {
+        return qualityService.queryProfiles(params)
+    }
+
     @ApiOperation(
             value = "List all quality profiles",
             nickname = "profiles",
@@ -36,7 +41,13 @@ class QualityProfileController extends RestfulController<QualityProfile> {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer')
+            @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer'),
+            @ApiImplicitParam(name = "offset", paramType = "query", required = false, value = "Offset results by", dataType = 'integer'),
+            @ApiImplicitParam(name = "sort", paramType = "query", required = false, value = "Property to sort results by", dataType = 'string'),
+            @ApiImplicitParam(name = "desc", paramType = "query", required = false, value = "Direction to sort results by", dataType = 'string'),
+            @ApiImplicitParam(name = "enabled", paramType = "query", required = false, value = "Only return enabled profiles", dataType = 'boolean'),
+            @ApiImplicitParam(name = "name", paramType = "query", required = false, value = "Search for profiles by name", dataType = 'string'),
+            @ApiImplicitParam(name = "shortName", paramType = "query", required = false, value = "Search for profiles by short name", dataType = 'string')
     ])
     def index(Integer max) {
         super.index(max)

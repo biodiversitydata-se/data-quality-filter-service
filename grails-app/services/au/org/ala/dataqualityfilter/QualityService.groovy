@@ -402,4 +402,18 @@ class QualityService {
         def qc = findCategoryByProfileAndId(profileId, categoryId)
         QualityFilter.findByQualityCategoryAndId(qc, id)
     }
+
+    List<QualityProfile> queryProfiles(Map map) {
+        QualityProfile.withCriteria(map) {
+            if (map.containsKey('enabled')) {
+                eq('enabled', map.boolean('enabled'))
+            }
+            if (map.containsKey('name')) {
+                ilike('name', map.name)
+            }
+            if (map.containsKey('shortName')) {
+                ilike('shortName', map.shortName)
+            }
+        }
+    }
 }
