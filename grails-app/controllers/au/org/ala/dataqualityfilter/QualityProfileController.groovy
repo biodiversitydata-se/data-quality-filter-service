@@ -23,7 +23,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
 
     @Override
     protected QualityProfile queryForResource(Serializable id) {
-        return qualityService.findQualityProfileById(id)
+        return qualityService.findProfileById(id)
     }
 
     @ApiOperation(

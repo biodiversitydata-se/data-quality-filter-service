@@ -363,7 +363,7 @@ class QualityService {
         resp
     }
 
-    QualityProfile findQualityProfileById(Serializable profileId) {
+    QualityProfile findProfileById(Serializable profileId) {
         def qp
         if (profileId == 'default') {
             qp = defaultProfile
@@ -378,12 +378,12 @@ class QualityService {
     }
 
     List<QualityCategory> findCategoriesByProfile(Serializable profileId) {
-        def qp = findQualityProfileById(profileId)
+        def qp = findProfileById(profileId)
         qp?.categories as List
     }
 
     QualityCategory findCategoryByProfileAndId(Serializable profileId, Serializable id) {
-        def qp = findQualityProfileById(profileId)
+        def qp = findProfileById(profileId)
         QualityCategory.findByQualityProfileAndId(qp, id)
     }
 
