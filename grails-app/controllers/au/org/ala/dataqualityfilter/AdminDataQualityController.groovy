@@ -124,11 +124,13 @@ class AdminDataQualityController {
             } catch (IllegalStateException e) {
                 return render(status: 400, text: 'invalid params')
             }
+            redirect(action: 'filters', id: profileid)
         }.invalidToken {
             // bad request
             log.debug("ignore duplicate save filter request. description:{}, filter:{}", qualityFilter.description, qualityFilter.filter)
+            redirect(action: 'filters', id: profileid)
+
         }
-        redirect(action: 'filters', id: profileid)
     }
 
     def deleteQualityFilter() {
