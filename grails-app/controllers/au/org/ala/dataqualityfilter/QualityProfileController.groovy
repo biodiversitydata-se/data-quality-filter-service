@@ -54,7 +54,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
     }
 
     @ApiOperation(
-            value = "List all quality profiles",
+            value = "Retrieve a single quality profile",
             nickname = "profiles/{id}",
             produces = "application/json",
             httpMethod = "GET"

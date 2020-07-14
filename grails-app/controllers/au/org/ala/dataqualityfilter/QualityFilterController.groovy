@@ -49,7 +49,7 @@ class QualityFilterController extends RestfulController<QualityFilter> {
     }
 
     @ApiOperation(
-            value = "List all quality profiles",
+            value = "Retrieve a single quality filter",
             nickname = "filters/{id}",
             produces = "application/json",
             httpMethod = "GET"
