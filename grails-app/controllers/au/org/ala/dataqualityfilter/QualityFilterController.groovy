@@ -60,8 +60,7 @@ class QualityFilterController extends RestfulController<QualityFilter> {
     @ApiImplicitParams([
             @ApiImplicitParam(name = "profileId", paramType = "path", required = true, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string'),
             @ApiImplicitParam(name = "categoryId", paramType = "path", required = true, value = "The id for the quality category", dataType = 'string'),
-            @ApiImplicitParam(name = "id", paramType = "path", required = false, value = "The id for the quality category", dataType = 'integer'),
-            @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer')
+            @ApiImplicitParam(name = "id", paramType = "path", required = false, value = "The id for the quality category", dataType = 'integer')
     ])
     def show() {
         super.show()

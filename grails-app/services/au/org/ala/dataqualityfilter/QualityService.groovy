@@ -404,7 +404,8 @@ class QualityService {
     }
 
     List<QualityProfile> queryProfiles(Map map) {
-        QualityProfile.withCriteria(map) {
+        def c = QualityProfile.createCriteria()
+        c.list(map) {
             if (map.containsKey('enabled')) {
                 eq('enabled', map.boolean('enabled'))
             }

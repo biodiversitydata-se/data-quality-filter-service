@@ -63,8 +63,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "id", paramType = "path", required = false, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string'),
-            @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer')
+            @ApiImplicitParam(name = "id", paramType = "path", required = false, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string')
     ])
     def show() {
         super.show()
