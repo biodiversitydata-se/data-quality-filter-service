@@ -1,8 +1,5 @@
 package au.org.ala.dataqualityfilter
 
-import com.google.common.base.Stopwatch
-import com.google.common.cache.Cache
-import com.google.common.cache.CacheBuilder
 import grails.core.GrailsApplication
 import grails.plugin.cache.Cacheable
 import grails.gorm.transactions.NotTransactional
@@ -16,8 +13,6 @@ import org.apache.lucene.search.TermRangeQuery
 import org.grails.web.json.JSONArray
 import org.springframework.context.MessageSource
 import org.springframework.web.util.UriComponentsBuilder
-
-import java.util.concurrent.TimeUnit
 
 @Transactional
 class QualityService {
@@ -125,59 +120,8 @@ class QualityService {
         QualityProfile.findByIsDefault(true)
     }
 
-    def clearRecordCountCache() {
-        recordCountCache.invalidateAll()
-    }
-
-    Cache<SpatialSearchRequestParams, Long> recordCountCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build { webServicesService.fullTextSearch(it)?.totalRecords }
-
-    private Long countRecordsExcludedByLabel(List<String> otherLabels, SpatialSearchRequestParams requestParams) {
-        def srp = requestParams.clone().with {
-            it.pageSize = 0
-            it.start = 0
-            it.flimit = 0
-            it.facet = false
-            it.sort = ''
-            it.max = 0
-            it.offset = 0
-            it.disableQualityFilter = otherLabels
-            it
-        }
-        recordCountCache.get(srp)
-    }
-
-    public Long countTotalRecords(SpatialSearchRequestParams requestParams) {
-        def srp = requestParams.clone().with {
-            it.pageSize = 0
-            it.start = 0
-            it.flimit = 0
-            it.facet = false
-            it.sort = ''
-            it.max = 0
-            it.offset = 0
-            it.disableQualityFilter = []
-            it.disableAllQualityFilters = true
-            it
-        }
-        recordCountCache.get(srp)
-    }
-
     String getJoinedQualityFilter(String profileName) {
         getEnabledQualityFilters(profileName).join(' AND ')
-    }
-
-    @Transactional(readOnly = true)
-    Map<String, Long> getExcludeCount(List<QualityCategory> qualityCategories, SpatialSearchRequestParams requestParams) {
-        Stopwatch sw = Stopwatch.createStarted()
-
-        def totalRecords = countTotalRecords(requestParams)
-        def labels = qualityCategories*.label as Set
-        def response = qualityCategories.collectEntries {
-                    def otherLabels = (labels - it.label) as List
-                    [(it.label): totalRecords - countRecordsExcludedByLabel(otherLabels, requestParams) ]
-                }
-        log.error("Quality Category facet counts took {}", sw)
-        return response
     }
 
     @Transactional(readOnly = true)

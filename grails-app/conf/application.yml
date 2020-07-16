@@ -164,12 +164,12 @@ security:
 
 server:
     contextPath: '/data-quality'
-    port: 8080
+    port: 8090
 
 environments:
     development:
         grails:
-            serverURL: "http://dev.ala.org.au:8080/data-quality"
+            serverURL: "http://dev.ala.org.au:8090/data-quality"
         security:
             cas:
                 appServerName: "https://auth.ala.org.au"
