@@ -125,7 +125,7 @@
                                 <g:hiddenField name="qualityCategory" value="${category.id}" />
 
                                 <div class="row">
-                                    <div class="col-md-2 smallpadding">
+                                    <div class="col-md-3 smallpadding">
                                         <label for="${filter.id + '-description'}">Filter Description</label>
                                         <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
                                     </div>
@@ -135,13 +135,13 @@
                                     <div class="col-md-2 smallpadding">
                                         <label for="${filter.id + '-value'}">Filter Value</label>
                                     </div>
-                                    <div class="col-md-3 smallpadding">
+                                    <div class="col-md-2 smallpadding">
                                         <label for="${filter.id + '-generated'}">Generated Filter</label>
                                     </div>
                                 </div>
 
                                 <div class="row current-filter filter-row" data-fq="${filter.filter}">
-                                    <div class="col-md-2 smallpadding">
+                                    <div class="col-md-3 smallpadding">
                                         <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%"/>
                                     </div>
                                     <div class="col-md-3 smallpadding" style="display: flex;">
@@ -154,7 +154,7 @@
                                     <div class="col-md-2 smallpadding">
                                         <g:textField class="form-control filterValue" name="filterValue" id="${filter.id + '-value'}" style="width: 100%"/>
                                     </div>
-                                    <div class="col-md-3 smallpadding">
+                                    <div class="col-md-2 smallpadding">
                                         <g:textField class="form-control filter" name="filter" id="${filter.id + '-generated'}" value="${filter.filter}" data-orig="${filter.filter}" readonly="readonly" style="width: 100%"/>
                                     </div>
                                     <div class="col-md-2 smallpadding">
@@ -174,7 +174,7 @@
                         <g:form useToken="true" action="saveQualityFilter">
                             <g:hiddenField name="qualityCategory" value="${category.id}" />
                             <div class="row">
-                                <div class="col-md-2 smallpadding">
+                                <div class="col-md-3 smallpadding">
                                     <label for="${category.id + '-description'}">Filter Description</label>
                                     <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
                                 </div>
@@ -184,12 +184,12 @@
                                 <div class="col-md-2 smallpadding">
                                     <label for="${category.id + '-value'}">Filter Value</label>
                                 </div>
-                                <div class="col-md-3 smallpadding">
+                                <div class="col-md-2 smallpadding">
                                     <label for="${category.id + '-generated'}">Generated Filter</label>
                                 </div>
                             </div>
                             <div class="row new-filter filter-row">
-                                <div class="col-md-2 smallpadding">
+                                <div class="col-md-3 smallpadding">
                                     <g:textArea class="form-control" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%"/>
                                 </div>
                                 <div class="col-md-3 smallpadding" style="display: flex">
@@ -202,7 +202,7 @@
                                 <div class="col-md-2 smallpadding">
                                     <g:textField class="form-control filterValue" name="filterValue" id="${category.id + '-value'}" placeholder="Filter value" style="width: 100%"/>
                                 </div>
-                                <div class="col-md-3 smallpadding">
+                                <div class="col-md-2 smallpadding">
                                     <g:textField class="form-control filter" name="filter" id="${category.id + '-generated'}" placeholder="Generated Filter" readonly="readonly" style="width: 100%"/>
                                 </div>
                                 <div class="col-md-2 smallpadding">
