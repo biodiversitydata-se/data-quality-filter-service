@@ -133,6 +133,7 @@ class QualityService {
     @Transactional(readOnly = true)
     String getInverseCategoryFilter(QualityCategory category) {
         PrecedenceQueryParser qp = new PrecedenceQueryParser()
+        qp.setAllowLeadingWildcard(true)
         TermQuery
         def filters = category.qualityFilters.findAll { it.enabled }*.filter
         def filter = filters.join(' AND ')
@@ -180,9 +181,16 @@ class QualityService {
         } else {
             def bqb = new BooleanQuery.Builder()
             clauses.each { clause ->
+                def q = clause.query
+                if (q instanceof  TermRangeQuery) {
+                    def s = 12;
+                }
+                def prohibited = clause.prohibited
+
                 bqb.add(clause.query, clause.prohibited ? BooleanClause.Occur.SHOULD : BooleanClause.Occur.MUST_NOT)
             }
-            return bqb.build().toString()
+            String s = bqb.build().toString();
+            return s;
         }
     }
 
