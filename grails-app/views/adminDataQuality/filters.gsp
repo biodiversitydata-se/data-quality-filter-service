@@ -119,7 +119,7 @@
                                     <label form-control for="${filter.id + '-enabled'}">Enable filter&nbsp;</label><g:checkBox name="enabled" id="${filter.id + '-enabled'}" value="${filter.enabled}" />
                                 </div>
                             </g:form>
-                            <g:form action="saveQualityFilter" useToken="true" method="POST">
+                            <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
                                 <g:hiddenField name="id" value="${filter.id}"/>
                                 <g:hiddenField name="version" value="${filter.version}"/>
                                 <g:hiddenField name="qualityCategory" value="${category.id}" />
@@ -171,7 +171,7 @@
                         </li>
                     </g:each>
                     <li class="list-group-item">
-                        <g:form useToken="true" action="saveQualityFilter">
+                        <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
                             <g:hiddenField name="qualityCategory" value="${category.id}" />
                             <div class="row">
                                 <div class="col-md-3 smallpadding">
@@ -190,7 +190,7 @@
                             </div>
                             <div class="row new-filter filter-row">
                                 <div class="col-md-3 smallpadding">
-                                    <g:textArea class="form-control" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%"/>
+                                    <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%"/>
                                 </div>
                                 <div class="col-md-3 smallpadding" style="display: flex">
                                     <select class="form-control exclude" from="" style="width: 30%">
@@ -253,6 +253,25 @@
 <asset:script type="text/javascript">
     $(document).ready(function() {
         setControlValues();
+    });
+
+    $('.saveFilter').on('submit', function(e) {
+        var filterDescription = $(this).find('.filterDescription').val().trim();
+
+        if (filterDescription.length === 0) {
+            alert("filter description can't be empty");
+            e.preventDefault();
+            return;
+        }
+
+        var filterValue = $(this).find('.filterValue').val().trim();
+        if (filterValue.length === 0) {
+            alert("filter value can't be empty");
+            e.preventDefault();
+            return;
+        }
+
+        $(this).submit();
     });
 
     function setControlValues() {
