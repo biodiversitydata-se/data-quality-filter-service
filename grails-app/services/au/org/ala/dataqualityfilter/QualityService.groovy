@@ -181,16 +181,9 @@ class QualityService {
         } else {
             def bqb = new BooleanQuery.Builder()
             clauses.each { clause ->
-                def q = clause.query
-                if (q instanceof  TermRangeQuery) {
-                    def s = 12;
-                }
-                def prohibited = clause.prohibited
-
                 bqb.add(clause.query, clause.prohibited ? BooleanClause.Occur.SHOULD : BooleanClause.Occur.MUST_NOT)
             }
-            String s = bqb.build().toString();
-            return s;
+            return bqb.build().toString()
         }
     }
 
