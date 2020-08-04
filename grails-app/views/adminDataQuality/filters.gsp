@@ -142,7 +142,7 @@
 
                                 <div class="row current-filter filter-row" data-fq="${filter.filter}">
                                     <div class="col-md-3 smallpadding">
-                                        <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%"/>
+                                        <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%" oninput="resizeTextArea(this)"/>
                                     </div>
                                     <div class="col-md-3 smallpadding" style="display: flex;">
                                         <select class="form-control exclude" style="width: 30%">
@@ -190,7 +190,7 @@
                             </div>
                             <div class="row new-filter filter-row">
                                 <div class="col-md-3 smallpadding">
-                                    <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%"/>
+                                    <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%" oninput="resizeTextArea(this)"/>
                                 </div>
                                 <div class="col-md-3 smallpadding" style="display: flex">
                                     <select class="form-control exclude" from="" style="width: 30%">
@@ -273,6 +273,12 @@
 
         $(this).submit();
     });
+
+    function resizeTextArea(field) {
+        field.style.height = Math.max(field.clientHeight, field.scrollHeight) + "px"
+        // show the reset button
+        $(field).closest('form').find('button[type=reset]').removeClass('hidden');
+    }
 
     function setControlValues() {
         // populate fqs
@@ -383,8 +389,8 @@
     $('.current-filter button[type=reset]').on('click', function(e) {
         e.preventDefault();
         var filtergroup = $(this).closest('.current-filter');
-        // reset description
-        $('.filterDescription', filtergroup).val($('.filterDescription', filtergroup).data('orig'));
+        // reset description controller's size and content
+        $('.filterDescription', filtergroup).attr("style", "").val($('.filterDescription', filtergroup).data('orig'));
         // reset negate, filter key, filter value
         setFQGroup(filtergroup);
         // reset calculated fq
@@ -393,7 +399,9 @@
 
     $('.new-filter button[type=reset]').on('click', function(e) {
         $(this).addClass('hidden');
+        $(this).closest('form').find('.filterDescription').attr("style", "");
     });
+
     $('input[type=checkbox][name=enabled]').on('change', function(e) {
         $(this).closest('form').submit();
     });
@@ -412,7 +420,7 @@
                     value: value
             }).done(function(data) {
                 $desc.val(data);
-                $desc.trigger("change");
+                $desc.trigger("input");
             }).fail(function( jqXHR, textStatus, error ) {
                 if (jqXHR.status === 404) {
                     alert( "No description found" );
@@ -421,7 +429,6 @@
                 }
             });
         }
-
     });
 </asset:script>
 </html>
