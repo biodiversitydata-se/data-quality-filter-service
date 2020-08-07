@@ -135,7 +135,7 @@ class QualityService {
         PrecedenceQueryParser qp = new PrecedenceQueryParser()
         qp.setAllowLeadingWildcard(true)
         TermQuery
-        def filters = category.qualityFilters.findAll { it.enabled }*.filter
+        def filters = category.qualityFilters.findAll { it.enabled }*.filter.collect { processFilter(it) }
         def filter = filters.join(' AND ')
         if (!filter) return ''
         Query query = qp.parse(filter, '')
@@ -150,6 +150,24 @@ class QualityService {
         }
 
         return inverseQuery
+    }
+
+    private def processFilter(filter) {
+        def key = filter.substring(0, filter.indexOf(':') + 1)
+        def val = filter.substring(filter.indexOf(':') + 1)
+
+        // If the value is surrounded by "", when it's passed into QueryParser, they will be removed. So in inversed query there's no ""
+        // for example -license:"CC-BY-NC" AND -license:"CC-BY-ND 4.0 (Int)" after inversing will be license:CC-BY-NC license:CC-BY-ND 4.0 (Int)
+        // To retain the "" in inversed query, we escape the original surrounding ""
+        // details can be found at https://stackoverflow.com/questions/63276920/
+        //
+        // we don't care about " inside the query becasue biocache-service will handle them.
+
+        if (val.startsWith('"') && val.endsWith('"')) {
+            val = '"\\"' + val.substring(1, val.length() - 1) + '\\""'
+        }
+
+        return key + val
     }
 
     private def inverseOtherQuery(Query query) {
