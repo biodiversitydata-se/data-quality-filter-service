@@ -22,11 +22,27 @@ class QualityService {
     def webServicesService
 
     def createOrUpdateCategory(QualityCategory qualityCategory) {
+        if (qualityCategory.displayOrder == null) {
+            qualityCategory.displayOrder = (QualityCategory.selectMaxDisplayOrder().get() ?: 0) + 1
+        }
+
         qualityCategory.save(validate: true, failOnError: true)
     }
 
     def createOrUpdateFilter(QualityFilter qualityFilter) {
-       qualityFilter.save(validate: true, failOnError: true)
+        if (qualityFilter.displayOrder == null) {
+            def maxDisplayOrder = QualityFilter.withCriteria {
+                qualityCategory {
+                    eq('id', qualityFilter.qualityCategory.id)
+                }
+                projections {
+                    max('displayOrder')
+                }
+            }
+
+            qualityFilter.displayOrder = (maxDisplayOrder.get(0) ?: 0) + 1
+        }
+        qualityFilter.save(validate: true, failOnError: true)
     }
 
     void deleteFilter(Long id) {
@@ -207,6 +223,9 @@ class QualityService {
 
     @Transactional
     void createOrUpdateProfile(QualityProfile qualityProfile) {
+        if (qualityProfile.displayOrder == null) {
+            qualityProfile.displayOrder = (QualityProfile.selectMaxDisplayOrder().get() ?: 0) + 1
+        }
         qualityProfile.save(validate: true, failOnError: true)
     }
 

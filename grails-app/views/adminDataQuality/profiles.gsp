@@ -4,6 +4,7 @@
 <head>
     <meta name="layout" content="${grailsApplication.config.skin.layout}"/>
     <title>Admin Functions | ${grailsApplication.config.skin.orgNameLong}</title>
+    <asset:javascript src="jquery.tablednd.js" />
     <asset:javascript src="jquery.js" />
     <asset:javascript src="bootbox/bootbox.min.js" />
     <asset:stylesheet src="admin.css" />
@@ -47,42 +48,44 @@
             <button data-toggle="modal" data-target="#import-profile-modal" class="btn btn-primary"><alatag:message code="dq.admin.import.profile.button" default="Import a profile"/></button>
         </div>
         <div class="col-md-12">
-            <table class="table table-bordered table-hover table-striped table-responsive">
+            <table id="profiletable" class="table table-bordered table-hover table-striped table-responsive">
                 <thead>
                 <tr>
                     <th>Id</th>
                     <th>Name</th>
                     <th>short-name</th>
-                    <td>enabled</td>
+                    <th>enabled</th>
                     <th></th>
                 </tr>
                 </thead>
                 <tbody>
-                <g:each in="${qualityProfileInstanceList}" var="profile">
-                    <tr>
-                        <td>${profile.id}</td>
-                        <td><g:link action="filters" id="${profile.id}">${profile.name}</g:link></td>
-                        <td>${profile.shortName}</td>
-                        <td>
-                            <g:form action="enableQualityProfile" useToken="true">
-                                <g:hiddenField name="id" value="${profile.id}" />
-                                <g:checkBox name="enabled" value="${profile.enabled}" disabled="${profile.isDefault}"  />
-                            </g:form>
-                        </td>
-                        <td>
-                            <button data-id="${profile.id}" data-name="${profile.name}" data-short-name="${profile.shortName}" data-description="${profile.description}" data-contact-name="${profile.contactName}" data-contact-email="${profile.contactEmail}" data-is-default="${profile.isDefault}" data-enabled="${profile.enabled}" class="btn btn-default btn-edit-profile"><i class="fa fa-edit"></i></button>
-                            <g:form action="setDefaultProfile" class="form-inline" style="display:inline;" useToken="true">
-                                <g:hiddenField name="id" value="${profile.id}" />
-                                <button type="submit" class="btn btn-${profile.isDefault ? 'primary' : 'default'} ${profile.isDefault ? ' active' : ''}" aria-pressed="${profile.isDefault}">Default</button>
-                            </g:form>
-                            <g:form action="deleteQualityProfile" data-confirmation="${profile.categories.size() > 0}" class="form-inline" style="display:inline;" useToken="true">
-                                <g:hiddenField name="id" value="${profile.id}" />
-                                <button type="submit" class="btn btn-danger" ${profile.isDefault ? 'disabled' : ''}><i class="fa fa-trash"></i></button>
-                            </g:form>
-                            <g:link action="exportProfile" id="${profile.id}"><button class="btn btn-default"><alatag:message code="dq.admin.export.profile.button" default="Export profile"/></button></g:link></td>
-                        </td>
-                    </tr>
-                </g:each>
+                <g:if test="${qualityProfileInstanceList != null && qualityProfileInstanceList.size() > 0}">
+                    <g:each in="${qualityProfileInstanceList.sort{it.displayOrder}}" var="profile">
+                        <tr id="profile-${profile.id}" data-curdisplayorder="${profile.displayOrder}">
+                            <td style="vertical-align: middle"><img src="${assetPath(src: 'menu.png')}" class="dragHandle" data-toggle="tooltip" title="drag/drop to re-order profiles"></img>&nbsp;&nbsp;${profile.id}</td>
+                            <td style="vertical-align: middle"><g:link action="filters" id="${profile.id}">${profile.name}</g:link></td>
+                            <td style="vertical-align: middle">${profile.shortName}</td>
+                            <td style="vertical-align: middle">
+                                <g:form action="enableQualityProfile" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}" />
+                                    <g:checkBox name="enabled" value="${profile.enabled}" disabled="${profile.isDefault}"  />
+                                </g:form>
+                            </td>
+                            <td>
+                                <button data-id="${profile.id}" data-name="${profile.name}" data-short-name="${profile.shortName}" data-description="${profile.description}" data-contact-name="${profile.contactName}" data-contact-email="${profile.contactEmail}" data-is-default="${profile.isDefault}" data-enabled="${profile.enabled}" class="btn btn-default btn-edit-profile"><i class="fa fa-edit"></i></button>
+                                <g:form action="setDefaultProfile" class="form-inline" style="display:inline;" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}" />
+                                    <button type="submit" class="btn btn-${profile.isDefault ? 'primary' : 'default'} ${profile.isDefault ? ' active' : ''}" aria-pressed="${profile.isDefault}">Default</button>
+                                </g:form>
+                                <g:form action="deleteQualityProfile" data-confirmation="${profile.categories.size() > 0}" class="form-inline" style="display:inline;" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}" />
+                                    <button type="submit" class="btn btn-danger" ${profile.isDefault ? 'disabled' : ''}><i class="fa fa-trash"></i></button>
+                                </g:form>
+                                <g:link action="exportProfile" id="${profile.id}"><button class="btn btn-default"><alatag:message code="dq.admin.export.profile.button" default="Export profile"/></button></g:link>
+                            </td>
+                        </tr>
+                    </g:each>
+                </g:if>
                 </tbody>
             </table>
         </div>
@@ -153,10 +156,55 @@
 
 <asset:script type="text/javascript">
     $(function() {
-        // var saveProfileModal = $('#save-profile-modal');//.on('shown.bs.modal'
+        $(document).ready(function() {
+            $("#profiletable").tableDnD({
+                onDragStart: function(table, row) {
+                    $("#profiletable").removeClass('table-striped table-hover'); // remove row coloring so dragClass can be applied
+                },
+                onDragStop : handlestop,
+                onDragClass: 'bg-info', // set color to the row being dragged
+                dragHandle: ".dragHandle"
+            });
+        });
+
+        // re-calculate display orders for profiles
+        function handlestop() {
+            var profilesids = [];
+            var orig_displayorders = [];
+            // get profile ids (top down order) and old orders
+            $("#profiletable").children("tbody").children("tr").each(function( index ) {
+                profilesids.push($(this).children('td').first().text().trim());
+                orig_displayorders.push(parseInt($(this).attr('data-curdisplayorder')));
+            });
+
+            var new_displayorders = orig_displayorders.slice();
+            new_displayorders.sort(function(a, b) {
+              return a - b;
+            })
+
+            for (var i = 0; i < profilesids.length; i++) {
+                // update profile if display order changed
+                if (orig_displayorders[i] !== new_displayorders[i]) {
+                    $.post("${g.createLink(controller: 'adminDataQuality', action: 'saveProfileViaPost')}", {
+                        id: profilesids[i],
+                        displayOrder: new_displayorders[i]
+                    }).done(function(data){
+                        $("#profiletable").find("#profile-" + data.id).attr("data-curdisplayorder", data.displayOrder);
+                    })
+                }
+            }
+
+            $("#profiletable").addClass('table-striped table-hover');
+        }
+
+        $("#profiletable tr").hover(function() {
+           $(this.cells[0]).find('.dragHandle').css( {'cursor':'move'});
+        });
+
         $('input[name=enabled]').on('click', function(e) {
           $(this).closest('form').submit();
         });
+
         // confirm delete a profile with categories
         $('form[data-confirmation=true]').on('submit', function(e) {
             var $this = $(this);
@@ -165,6 +213,7 @@
                 return false;
             }
         });
+
         $('.btn-edit-profile').on('click', function(e) {
             var $this = $(this);
             var id = $this.data('id');

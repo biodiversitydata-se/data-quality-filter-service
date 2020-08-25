@@ -14,6 +14,7 @@ class QualityCategory {
     String name
     String label
     String description
+    Long displayOrder
 
     Date dateCreated
     Date lastUpdated
@@ -36,5 +37,13 @@ class QualityCategory {
         dateCreated index: 'quality_category_date_created_idx'
         qualityFilters sort: 'dateCreated'
         sort 'dateCreated'
+    }
+
+    static namedQueries = {
+        selectMaxDisplayOrder {
+            projections {
+                max('displayOrder')
+            }
+        }
     }
 }

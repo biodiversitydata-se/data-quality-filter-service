@@ -7,7 +7,7 @@ class BootStrap {
         QualityProfile.withTransaction {
             def qp = QualityProfile.first()
             if (!qp) {
-                qp = new QualityProfile(name: 'Default', shortName: 'default', description: 'This is the default profile, it should be edited', contactName: 'Support Email', contactEmail: '', isDefault: true, enabled: true)
+                qp = new QualityProfile(name: 'Default', shortName: 'default', description: 'This is the default profile, it should be edited', contactName: 'Support Email', contactEmail: '', isDefault: true, enabled: true, displayOrder: 1)
                 def qcs = QualityCategory.findAll()
                 qcs.each { qp.addToCategories(it) }
                 qp.save()
@@ -27,12 +27,14 @@ class BootStrap {
                     categories  : profile.categories
                 ]
             }
+
             it.registerObjectMarshaller(QualityCategory) { QualityCategory category ->
                 [
                     enabled     : category.enabled,
                     name        : category.name,
                     label       : category.label,
                     description : category.description,
+                    displayOrder: category.displayOrder,
                     qualityFilters  : category.qualityFilters
                 ]
             }
@@ -41,7 +43,8 @@ class BootStrap {
                 [
                     enabled     : filter.enabled,
                     description : filter.description,
-                    filter      : filter.filter
+                    filter      : filter.filter,
+                    displayOrder: filter.displayOrder
                 ]
             }
         }
@@ -51,6 +54,7 @@ class BootStrap {
             output['id'] = it.id
             output['name'] = it.name
             output['shortName'] = it.shortName
+            output['displayOrder'] = it.displayOrder
             output['description'] = it.description
             output['contactName'] = it.contactName
             output['contactEmail'] = it.contactEmail
@@ -65,6 +69,7 @@ class BootStrap {
             output['name'] = it.name
             output['label'] = it.label
             output['description'] = it.description
+            output['displayOrder'] = it.displayOrder
             output['qualityFilters'] = it.qualityFilters
             return output;
         }
@@ -75,6 +80,7 @@ class BootStrap {
             output['enabled'] = it.enabled
             output['description'] = it.description
             output['filter'] = it.filter
+            output['displayOrder'] = it.displayOrder
             return output;
         }
     }

@@ -4,6 +4,7 @@
 <head>
     <meta name="layout" content="${grailsApplication.config.skin.layout}"/>
     <title>Admin Functions | ${grailsApplication.config.skin.orgNameLong}</title>
+    <asset:javascript src="jquery.tablednd.js" />
     <asset:javascript src="jquery.js" />
     <asset:javascript src="bootbox/bootbox.min.js" />
     <asset:stylesheet src="admin.css" />
@@ -31,14 +32,8 @@
     <div class="col-md-12">
         <h1>${profile.name} Data Quality Filters</h1>
 
-        <div class="well">
-            <ul>
-            <g:each var="qualityFilterString" in="${qualityFilterStrings}">
-                <li>${qualityFilterString.key}<code>
-                    fq=${qualityFilterString.value}
-                </code></li>
-            </g:each>
-            </ul>
+        <div class="well" id="filtersboard">
+            <ul></ul>
         </div>
         <g:if test="${flash.message}">
             <div class="alert alert-warning">
@@ -61,160 +56,174 @@
 
     </div>
     <div class="col-md-12">
-        <g:each in="${qualityCategoryInstanceList}" var="category">
-            <div class="panel ${category.enabled ? 'panel-default' : 'panel-warning'} panel-category">
-                <div class="panel-heading">
-                    <g:form action="deleteQualityCategory" useToken="true" class="form-inline pull-right" data-confirmation="${category.qualityFilters.size() > 0}"><g:hiddenField name="id" value="${category.id}"/><button type="submit" class="btn btn-xs btn-danger">&times;</button></g:form>
-                    <h3 class="panel-title">
-                        <g:form class="form-inline" style="display: inline-block;" useToken="true" action="enableQualityCategory">
-                            <g:hiddenField name="id" value="${category.id}"/>
-                            <label class="sr-only">Enabled</label>
-                            <g:checkBox name="enabled" value="${category.enabled}" />
-                        </g:form>
-                        <span class="panel-title-ro">${category.name} (${category.label}) <button class="btn btn-xs btn-default btn-edit-category"><i class="fa fa-edit"></i></button></span>
-                        <span class="panel-title-rw hidden">
-                            <g:form action="saveQualityCategory" useToken="true" class="form-inline">
-                                <g:hiddenField name="id" value="${category.id}"/>
-                                <g:hiddenField name="version" value="${category.version}"/>
-                                <g:hiddenField name="description" value="${category.description}" />
-                                <div class="form-group">
-                                    <label for="name">Name</label>
-                                    <g:textField class="form-control" name="name" value="${category.name}" />
-                                </div>
-                                <div class="form-group">
-                                    <label for="label">Label</label>
-                                    <g:textField class="form-control" name="label" value="${category.label}" />
-                                </div>
-                                <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-save"></i></button>
-                                <button type="reset" class="btn btn-sm btn-default"><i class="fa fa-close"></i></button>
-                            </g:form>
-                        </span>
-                    </h3>
-                </div>
-                <g:if test="${category.description}">
-                    <div class="panel-body">
-                        <span class="category-description-ro">
-                            <p class="category-description">${category.description}</p>
-                            <button class="btn btn-default"><i class="fa fa-edit"></i></button>
-                        </span>
-                        <span class="category-description-rw hidden">
-                            <g:form action="saveQualityCategory" useToken="true">
-                                <g:hiddenField name="id" value="${category.id}"/>
-                                <g:hiddenField name="version" value="${category.version}"/>
-                                <g:hiddenField name="name" value="${category.name}"/>
-                                <g:hiddenField name="label" value="${category.label}"/>
-                                <g:textArea class="form-control" name="description" value="${category.description}" />
-                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i></button>
-                                <button type="reset" class="btn btn-default"><i class="fa fa-close"></i></button>
-                            </g:form>
-                        </span>
-                    </div>
-                </g:if>
-                <ul class="list-group">
-                    <g:each in="${category.qualityFilters}" var="filter">
-                        <li class="list-group-item ${!filter.enabled ? 'list-group-item-warning' : '' }">
-                            <g:form useToken="true" action="enableQualityFilter">
-                                <g:hiddenField name="id" value="${filter.id}"/>
-                                <div class="row smallpadding">
-                                    <label form-control for="${filter.id + '-enabled'}">Enable filter&nbsp;</label><g:checkBox name="enabled" id="${filter.id + '-enabled'}" value="${filter.enabled}" />
-                                </div>
-                            </g:form>
-                            <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
-                                <g:hiddenField name="id" value="${filter.id}"/>
-                                <g:hiddenField name="version" value="${filter.version}"/>
-                                <g:hiddenField name="qualityCategory" value="${category.id}" />
-
-                                <div class="row">
-                                    <div class="col-md-3 smallpadding">
-                                        <label for="${filter.id + '-description'}">Filter Description</label>
-                                        <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
-                                    </div>
-                                    <div class="col-md-3 smallpadding">
-                                        <label for="${filter.id + '-key'}">Filter Key</label>
-                                    </div>
-                                    <div class="col-md-2 smallpadding">
-                                        <label for="${filter.id + '-value'}">Filter Value</label>
-                                    </div>
-                                    <div class="col-md-2 smallpadding">
-                                        <label for="${filter.id + '-generated'}">Generated Filter</label>
-                                    </div>
-                                </div>
-
-                                <div class="row current-filter filter-row" data-fq="${filter.filter}">
-                                    <div class="col-md-3 smallpadding">
-                                        <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%" oninput="resizeTextArea(this)"/>
-                                    </div>
-                                    <div class="col-md-3 smallpadding" style="display: flex;">
-                                        <select class="form-control exclude" style="width: 30%">
-                                            <option value="Include">Include</option>
-                                            <option value="Exclude">Exclude</option>
-                                        </select>
-                                        <g:select class="form-control filterKey" name="filterKey" id="${filter.id + '-key'}" from="${options}" value="abcd_type_status" style="width: 70%"/>
-                                    </div>
-                                    <div class="col-md-2 smallpadding">
-                                        <g:textField class="form-control filterValue" name="filterValue" id="${filter.id + '-value'}" style="width: 100%"/>
-                                    </div>
-                                    <div class="col-md-2 smallpadding">
-                                        <g:textField class="form-control filter" name="filter" id="${filter.id + '-generated'}" value="${filter.filter}" data-orig="${filter.filter}" readonly="readonly" style="width: 100%"/>
-                                    </div>
-                                    <div class="col-md-2 smallpadding">
-                                        <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-save"></i></button>
-                                        <button type="reset" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></button>
-                                        <button type="submit" form="${filter.id}" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></button>
-                                    </div>
-                                </div>
-                            </g:form>
-                            <g:form class="form-inline" name="${filter.id}" action="deleteQualityFilter" useToken="true" style="display: inline-block;" method="post">
-                                <g:hiddenField name="id" value="${filter.id}"/>
-                                <g:hiddenField name="profileId" value="${category.qualityProfile.id}" />
-                            </g:form>
-                        </li>
-                    </g:each>
-                    <li class="list-group-item">
-                        <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
-                            <g:hiddenField name="qualityCategory" value="${category.id}" />
-                            <div class="row">
-                                <div class="col-md-3 smallpadding">
-                                    <label for="${category.id + '-description'}">Filter Description</label>
-                                    <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
-                                </div>
-                                <div class="col-md-3 smallpadding">
-                                    <label for="${category.id + '-key'}">Filter Key</label>
-                                </div>
-                                <div class="col-md-2 smallpadding">
-                                    <label for="${category.id + '-value'}">Filter Value</label>
-                                </div>
-                                <div class="col-md-2 smallpadding">
-                                    <label for="${category.id + '-generated'}">Generated Filter</label>
-                                </div>
+        <table class="table table-responsive categoriestable" style="table-layout:fixed;">
+            <g:if test="${qualityCategoryInstanceList != null && qualityCategoryInstanceList.size() > 0}">
+                <g:each in="${qualityCategoryInstanceList.sort{it.displayOrder}}" var="category">
+                <tr id="${'category' + category.id}" data-curdisplayorder="${category.displayOrder}">
+                    <td style="border:none">
+                        <div class="panel ${category.enabled ? 'panel-default' : 'panel-warning'} panel-category">
+                            <div class="panel-heading">
+                                <g:form action="deleteQualityCategory" useToken="true" class="form-inline pull-right" data-confirmation="${category.qualityFilters.size() > 0}"><g:hiddenField name="id" value="${category.id}"/><button type="submit" class="btn btn-xs btn-danger">&times;</button></g:form>
+                                <h3 class="panel-title">
+                                    <img src="${assetPath(src: 'menu.png')}" class="dragHandleCategory" data-toggle="tooltip" title="drag/drop to re-order categories" style="display: inline"></img>
+                                    <g:form class="form-inline" style="display: inline-block;" useToken="true" action="enableQualityCategory">
+                                        <g:hiddenField name="id" value="${category.id}"/>
+                                        <label class="sr-only">Enabled</label>
+                                        <g:checkBox name="enabled" value="${category.enabled}" />
+                                    </g:form>
+                                    <span class="panel-title-ro">${category.name} (${category.label}) <button class="btn btn-xs btn-default btn-edit-category"><i class="fa fa-edit"></i></button></span>
+                                    <span class="panel-title-rw hidden">
+                                        <g:form action="saveQualityCategory" useToken="true" class="form-inline">
+                                            <g:hiddenField name="id" value="${category.id}"/>
+                                            <g:hiddenField name="version" value="${category.version}"/>
+                                            <g:hiddenField name="description" value="${category.description}" />
+                                            <div class="form-group">
+                                                <label for="name">Name</label>
+                                                <g:textField class="form-control" name="name" value="${category.name}" />
+                                            </div>
+                                            <div class="form-group">
+                                                <label for="label">Label</label>
+                                                <g:textField class="form-control" name="label" value="${category.label}" />
+                                            </div>
+                                            <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-save"></i></button>
+                                            <button type="reset" class="btn btn-sm btn-default"><i class="fa fa-close"></i></button>
+                                        </g:form>
+                                    </span>
+                                </h3>
                             </div>
-                            <div class="row new-filter filter-row">
-                                <div class="col-md-3 smallpadding">
-                                    <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%" oninput="resizeTextArea(this)"/>
-                                </div>
-                                <div class="col-md-3 smallpadding" style="display: flex">
-                                    <select class="form-control exclude" from="" style="width: 30%">
-                                        <option value="Include" selected="selected">Include</option>
-                                        <option value="Exclude">Exclude</option>
-                                    </select>
-                                    <g:select class="form-control filterKey" name="filterKey" id="${category.id + '-key'}" style="width: 70%" from="${options}"/>
-                                </div>
-                                <div class="col-md-2 smallpadding">
-                                    <g:textField class="form-control filterValue" name="filterValue" id="${category.id + '-value'}" placeholder="Filter value" style="width: 100%"/>
-                                </div>
-                                <div class="col-md-2 smallpadding">
-                                    <g:textField class="form-control filter" name="filter" id="${category.id + '-generated'}" placeholder="Generated Filter" readonly="readonly" style="width: 100%"/>
-                                </div>
-                                <div class="col-md-2 smallpadding">
-                                    <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-plus"></i></button>
-                                    <button type="reset" class="btn btn-sm btn-warning hidden"><i class="fa fa-close"></i></button>
-                                </div>
+                            <g:if test="${category.description}">
+                            <div class="panel-body">
+                                <span class="category-description-ro">
+                                    <p class="category-description">${category.description}</p>
+                                    <button class="btn btn-default"><i class="fa fa-edit"></i></button>
+                                </span>
+                                <span class="category-description-rw hidden">
+                                    <g:form action="saveQualityCategory" useToken="true">
+                                        <g:hiddenField name="id" value="${category.id}"/>
+                                        <g:hiddenField name="version" value="${category.version}"/>
+                                        <g:hiddenField name="name" value="${category.name}"/>
+                                        <g:hiddenField name="label" value="${category.label}"/>
+                                        <g:textArea class="form-control" name="description" value="${category.description}" />
+                                        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i></button>
+                                        <button type="reset" class="btn btn-default"><i class="fa fa-close"></i></button>
+                                    </g:form>
+                                </span>
                             </div>
-                        </g:form>
-                    </li>
-                </ul>
-            </div>
-        </g:each>
+                            </g:if>
+                            <table id="${category.id}" data-profileid="${profile.id}" data-categorylabel="${category.label}" class="table table-responsive filterstable" style="table-layout:fixed;">
+                                <g:each in="${category.qualityFilters.sort{it.displayOrder}}" var="filter">
+                                <tr id="${'category' + category.id + 'filter' + filter.id}" class="${filter.enabled ? 'bg-default' : 'bg-warning'}" data-curdisplayorder="${filter.displayOrder}" data-filtervalue="${filter.filter}">
+                                    <td style="vertical-align: middle; width:15px"><img src="${assetPath(src: 'menu.png')}" class="dragHandle" data-toggle="tooltip" title="drag/drop to re-order filters"></img></td>
+                                    <td>
+                                        <g:form useToken="true" action="enableQualityFilter">
+                                            <g:hiddenField name="id" value="${filter.id}"/>
+                                            <div class="smallpadding">
+                                                <label form-control for="${filter.id + '-enabled'}">Enable filter&nbsp;</label><g:checkBox name="enabled" id="${filter.id + '-enabled'}" class='filter-enabled' value="${filter.enabled}" />
+                                            </div>
+                                        </g:form>
+                                        <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
+                                            <g:hiddenField name="id" value="${filter.id}"/>
+                                            <g:hiddenField name="version" value="${filter.version}"/>
+                                            <g:hiddenField name="qualityCategory" value="${category.id}" />
+                                            <div>
+                                                <div class="col-md-3 smallpadding">
+                                                    <label for="${filter.id + '-description'}">Filter Description</label>
+                                                    <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
+                                                </div>
+                                                <div class="col-md-3 smallpadding">
+                                                    <label for="${filter.id + '-key'}">Filter Key</label>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <label for="${filter.id + '-value'}">Filter Value</label>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <label for="${filter.id + '-generated'}">Generated Filter</label>
+                                                </div>
+                                            </div>
+
+                                            <div class="current-filter filter-row" data-fq="${filter.filter}">
+                                                <div class="col-md-3 smallpadding">
+                                                    <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%" oninput="resizeTextArea(this)"/>
+                                                </div>
+                                                <div class="col-md-3 smallpadding" style="display: flex;">
+                                                    <select class="form-control exclude" style="width: 30%">
+                                                        <option value="Include">Include</option>
+                                                        <option value="Exclude">Exclude</option>
+                                                    </select>
+                                                    <g:select class="form-control filterKey" name="filterKey" id="${filter.id + '-key'}" from="${options}" value="abcd_type_status" style="width: 70%"/>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <g:textField class="form-control filterValue" name="filterValue" id="${filter.id + '-value'}" style="width: 100%"/>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <g:textField class="form-control filter" name="filter" id="${filter.id + '-generated'}" value="${filter.filter}" data-orig="${filter.filter}" readonly="readonly" style="width: 100%"/>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-save"></i></button>
+                                                    <button type="reset" class="btn btn-sm btn-default"><i class="fa fa-refresh"></i></button>
+                                                    <button type="submit" form="${filter.id}" class="btn btn-sm btn-danger" ><i class="fa fa-trash"></i></button>
+                                                </div>
+                                            </div>
+                                        </g:form>
+                                        <g:form class="form-inline" name="${filter.id}" action="deleteQualityFilter" useToken="true" style="display: inline-block;" method="post">
+                                            <g:hiddenField name="id" value="${filter.id}"/>
+                                            <g:hiddenField name="profileId" value="${category.qualityProfile.id}" />
+                                        </g:form>
+                                    </td>
+                                </tr>
+                                </g:each>
+                                <tr class="nodrag nodrop">
+                                    <td style="width:15px"></td>
+                                    <td>
+                                        <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
+                                            <g:hiddenField name="qualityCategory" value="${category.id}" />
+                                            <div>
+                                                <div class="col-md-3 smallpadding">
+                                                    <label for="${category.id + '-description'}">Filter Description</label>
+                                                    <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
+                                                </div>
+                                                <div class="col-md-3 smallpadding">
+                                                    <label for="${category.id + '-key'}">Filter Key</label>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <label for="${category.id + '-value'}">Filter Value</label>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <label for="${category.id + '-generated'}">Generated Filter</label>
+                                                </div>
+                                            </div>
+                                            <div class="new-filter filter-row">
+                                                <div class="col-md-3 smallpadding">
+                                                    <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%" oninput="resizeTextArea(this)"/>
+                                                </div>
+                                                <div class="col-md-3 smallpadding" style="display: flex">
+                                                    <select class="form-control exclude" from="" style="width: 30%">
+                                                        <option value="Include" selected="selected">Include</option>
+                                                        <option value="Exclude">Exclude</option>
+                                                    </select>
+                                                    <g:select class="form-control filterKey" name="filterKey" id="${category.id + '-key'}" style="width: 70%" from="${options}"/>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <g:textField class="form-control filterValue" name="filterValue" id="${category.id + '-value'}" placeholder="Filter value" style="width: 100%"/>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <g:textField class="form-control filter" name="filter" id="${category.id + '-generated'}" placeholder="Generated Filter" readonly="readonly" style="width: 100%"/>
+                                                </div>
+                                                <div class="col-md-2 smallpadding">
+                                                    <button type="submit" class="btn btn-sm btn-success"><i class="fa fa-plus"></i></button>
+                                                    <button type="reset" class="btn btn-sm btn-warning hidden"><i class="fa fa-close"></i></button>
+                                                </div>
+                                            </div>
+                                        </g:form>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                     </td>
+                </tr>
+                </g:each>
+            </g:if>
+        </table>
     </div>
 </div>
 <div id="add-category-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -253,6 +262,129 @@
 <asset:script type="text/javascript">
     $(document).ready(function() {
         setControlValues();
+        updateFilters();
+
+        $(".filterstable").tableDnD({
+            onDragClass: 'bg-info',
+            onDragStop : handleFilterstop,
+            dragHandle: ".dragHandle"
+        })
+
+        $(".categoriestable").tableDnD({
+            onDragClass: 'bg-info',
+            onDragStop: handleCategoryStop,
+            dragHandle: ".dragHandleCategory"
+        })
+    });
+
+    function updateFilters() {
+        var ul = $('#filtersboard ul')
+        // clear content
+        $(ul).empty();
+
+        // go through each category (table)
+        $('.filterstable').each(function() {
+            var categotyEnabled = $(this).closest('.panel').find('*[name=enabled]').first().is(':checked')
+            if (categotyEnabled) {
+                // get category label
+                var label = $(this).attr('data-categorylabel')
+                var enabledFilters = []
+                // go through each filter in this category
+                $(this).children('tbody').children('tr').not(':last').each(function() {
+                    // if filter is enabled
+                    if ($(this).find('.filter-enabled').is(":checked")) {
+                        enabledFilters.push($(this).attr('data-filtervalue'))
+                    }
+                })
+
+                if (enabledFilters.length > 0) {
+                    $(ul).append('<li>' + label + '<code> fq=' + enabledFilters.join(' AND ') + '</code></li>');
+                }
+            }
+        })
+    }
+
+    // re-calculate display orders for profiles
+    function handleFilterstop(table, row) {
+        var profileId = $(table).attr('data-profileid');
+        var categoryId = $(table).attr('id');
+
+        var filterids = [];
+        var orig_displayorders = [];
+        // get filter ids (top down order) and old orders (except last row)
+        $(table).children("tbody").children("tr").not(":last").each(function() {
+            var rowid = $(this).attr('id');
+            var filterid = rowid.substring(rowid.indexOf('filter')).substring(6);
+            filterids.push(filterid)
+            orig_displayorders.push(parseInt($(this).attr('data-curdisplayorder')));
+        });
+
+        var new_displayorders = orig_displayorders.slice();
+        new_displayorders.sort(function(a, b) {
+            return a - b;
+        })
+
+        var orderchanged = false;
+        for (var i = 0; i < filterids.length; i++) {
+            // update filter if display order changed
+            if (orig_displayorders[i] !== new_displayorders[i]) {
+                orderchanged = true;
+                $.post("${g.createLink(controller: 'adminDataQuality', action: 'saveFilterViaPost')}", {
+                    id: filterids[i],
+                    displayOrder: new_displayorders[i]
+                }).done(function(data){
+                    $(table).find('#category' + categoryId + 'filter' + data.id).attr("data-curdisplayorder", data.displayOrder);
+                })
+            }
+        }
+
+        // update filters displayed
+        if (orderchanged) {
+            updateFilters();
+        }
+    }
+
+    function handleCategoryStop(table, row) {
+        var categoryids = [];
+        var orig_displayorders = [];
+        // get category ids (top down order) and old orders
+        $(table).children("tbody").children("tr").each(function() {
+            // category id in the form 'category12'
+            categoryids.push($(this).attr('id').substring(8))
+            orig_displayorders.push(parseInt($(this).attr('data-curdisplayorder')));
+        });
+
+        var new_displayorders = orig_displayorders.slice();
+        new_displayorders.sort(function(a, b) {
+            return a - b;
+        })
+
+        var orderchanged = false;
+        for (var i = 0; i < categoryids.length; i++) {
+            // update category if display order changed
+            if (orig_displayorders[i] !== new_displayorders[i]) {
+                orderchanged = true;
+                $.post("${g.createLink(controller: 'adminDataQuality', action: 'saveQualityCategoryViaPost')}", {
+                    id: categoryids[i],
+                    displayOrder: new_displayorders[i]
+                }).done(function(data){
+                    $(table).find('#category' + data.id).attr("data-curdisplayorder", data.displayOrder);
+                })
+            }
+        }
+
+        // update filters displayed
+        if (orderchanged) {
+            updateFilters();
+        }
+    }
+
+    $(".filterstable tr").hover(function() {
+       $(this.cells[0]).find('.dragHandle').css( {'cursor':'move'});
+    });
+
+    $(".categoriestable tr").hover(function() {
+       $(this.cells[0]).find('.dragHandleCategory').css( {'cursor':'move'});
     });
 
     $('.saveFilter').on('submit', function(e) {

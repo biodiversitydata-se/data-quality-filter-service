@@ -13,6 +13,7 @@ class QualityFilter {
 
     String description
     String filter
+    Long displayOrder
 
     Date dateCreated
     Date lastUpdated

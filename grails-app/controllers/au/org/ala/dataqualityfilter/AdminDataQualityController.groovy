@@ -35,16 +35,25 @@ class AdminDataQualityController {
 
     def saveProfile(QualityProfile qualityProfile) {
         withForm {
-            try {
-                qualityService.createOrUpdateProfile(qualityProfile)
-            } catch (ValidationException e) {
-                flash.errors = e.errors
-            }
+            saveProfileImpl(qualityProfile)
         }.invalidToken {
             // bad request
             log.debug("ignore duplicate save profile request. name:{}, shortName:{}", qualityProfile.name, qualityProfile.shortName)
         }
         redirect(action: 'profiles')
+    }
+
+    def saveProfileImpl(QualityProfile qualityProfile) {
+        try {
+            qualityService.createOrUpdateProfile(qualityProfile)
+        } catch (ValidationException e) {
+            flash.errors = e.errors
+        }
+    }
+
+    def saveProfileViaPost(QualityProfile qualityProfile) {
+        saveProfileImpl(qualityProfile)
+        render QualityProfile.findById(qualityProfile.id) as JSON
     }
 
     def enableQualityProfile() {
@@ -80,16 +89,25 @@ class AdminDataQualityController {
 
     def saveQualityCategory(QualityCategory qualityCategory) {
         withForm {
-            try {
-                qualityService.createOrUpdateCategory(qualityCategory)
-            } catch (ValidationException e) {
-                flash.errors = e.errors
-            }
+            saveQualityCategoryImpl()
         }.invalidToken {
             // bad request
             log.debug("ignore duplicate save category request. name:{}, label:{}", qualityCategory.name, qualityCategory.label)
         }
         redirect(action: 'filters', id: qualityCategory.qualityProfile.id)
+    }
+
+    def saveQualityCategoryImpl(QualityCategory qualityCategory) {
+        try {
+            qualityService.createOrUpdateCategory(qualityCategory)
+        } catch (ValidationException e) {
+            flash.errors = e.errors
+        }
+    }
+
+    def saveQualityCategoryViaPost(QualityCategory qualityCategory) {
+        saveQualityCategoryImpl(qualityCategory)
+        render QualityCategory.findById(qualityCategory.id) as JSON
     }
 
     def enableQualityCategory() {
@@ -117,20 +135,28 @@ class AdminDataQualityController {
     def saveQualityFilter(QualityFilter qualityFilter) {
         def profileid = qualityFilter.qualityCategory.qualityProfile.id
         withForm {
-            try {
-                qualityService.createOrUpdateFilter(qualityFilter)
-            } catch (ValidationException e) {
-                flash.errors = e.errors
-            } catch (IllegalStateException e) {
-                return render(status: 400, text: 'invalid params')
-            }
+            saveFilterImpl()
             redirect(action: 'filters', id: profileid)
         }.invalidToken {
             // bad request
             log.debug("ignore duplicate save filter request. description:{}, filter:{}", qualityFilter.description, qualityFilter.filter)
             redirect(action: 'filters', id: profileid)
-
         }
+    }
+
+    def saveFilterImpl(QualityFilter qualityFilter) {
+        try {
+            qualityService.createOrUpdateFilter(qualityFilter)
+        } catch (ValidationException e) {
+            flash.errors = e.errors
+        } catch (IllegalStateException e) {
+            return render(status: 400, text: 'invalid params')
+        }
+    }
+
+    def saveFilterViaPost(QualityFilter qualityFilter) {
+        saveFilterImpl(qualityFilter)
+        render QualityFilter.findById(qualityFilter.id) as JSON
     }
 
     def deleteQualityFilter() {
@@ -193,12 +219,25 @@ class AdminDataQualityController {
             }
 
             try {
+                // set profile display order, there may already have existing profiles, so new display order = current max + 1
+                profile.displayOrder = (QualityProfile.selectMaxDisplayOrder().get() ?: 0) + 1
+
                 // setup mapping
+                // since we are creating a new profile, displayOrders of categories within it should start from 1
+                Long categoryDisplayOrder = 1
                 for (QualityCategory category : profile.categories) {
                     category.qualityProfile = profile
+                    if (category.displayOrder == null) {
+                        category.displayOrder = categoryDisplayOrder++
+                    }
 
+                    // within a category, filter displayOrder starts from 1
+                    Long filterDisplayOrder = 1;
                     for (QualityFilter filter : category.qualityFilters) {
                         filter.qualityCategory = category
+                        if (filter.displayOrder == null) {
+                            filter.displayOrder = filterDisplayOrder++;
+                        }
                     }
                 }
 
