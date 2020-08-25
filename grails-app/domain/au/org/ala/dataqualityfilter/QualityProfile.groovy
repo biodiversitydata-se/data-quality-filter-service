@@ -13,13 +13,13 @@ class QualityProfile {
     String shortName
     String description
 
-    Long displayOrder
-
     String contactName
     String contactEmail
 
     boolean enabled
     boolean isDefault
+
+    Long displayOrder
 
     Date dateCreated
     Date lastUpdated
