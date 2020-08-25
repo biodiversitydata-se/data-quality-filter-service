@@ -17,8 +17,8 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
 
     def 'test create'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
-        QualityCategory qc = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
+        QualityCategory qc = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1)
 
         when:
         def result = service.createOrUpdateCategory(qc)
@@ -34,8 +34,8 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
 
     def 'test update'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
-        QualityCategory qc = new QualityCategory(name: 'name', label: 'label', description: '', qualityProfile: qp1).save()
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
+        QualityCategory qc = new QualityCategory(name: 'name', label: 'label', description: '', qualityProfile: qp1, displayOrder: 1).save()
 
         when:
         qc.description = 'description'
@@ -47,8 +47,8 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
 
     def 'test invalid create'(name, label) {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
-        QualityCategory qc = new QualityCategory(name: name, label: label, description: 'desc', qualityProfile: qp1)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
+        QualityCategory qc = new QualityCategory(name: name, label: label, description: 'desc', qualityProfile: qp1, displayOrder: 1)
 
         when:
         def result = service.createOrUpdateCategory(qc)
@@ -64,9 +64,9 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
 
     def 'test filter create'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
-        QualityCategory qc = new QualityCategory(name: 'name', label: 'label', qualityProfile: qp1).save()
-        QualityFilter qf = new QualityFilter(qualityCategory: qc, filter: 'asdf', description: 'asdf')
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
+        QualityCategory qc = new QualityCategory(name: 'name', label: 'label', qualityProfile: qp1, displayOrder: 1).save()
+        QualityFilter qf = new QualityFilter(qualityCategory: qc, filter: 'asdf', description: 'asdf', displayOrder: 1)
 
         when:
         def result = service.createOrUpdateFilter(qf)
@@ -88,14 +88,14 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
     @Ignore("Grails GORM unit testing exhibits a bug when the profile to category relation is added")
     def 'test getEnabledCategoriesAndFilters'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
-        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2).save(flush: true, failOnError: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2, displayOrder: 2).save(flush: true, failOnError: true)
 
         when:
         def result = service.getEnabledCategoriesAndFilters(qp1.shortName)
@@ -107,14 +107,14 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
     @Ignore("Grails GORM unit testing exhibits a bug when the profile to category relation is added")
     def 'test getEnabledQualityFilters'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
-        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2).save(flush: true, failOnError: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2, displayOrder: 2).save(flush: true, failOnError: true)
 
         when:
         def result = service.getEnabledQualityFilters(qp1.shortName)
@@ -126,14 +126,14 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
     @Ignore("Grails GORM unit testing exhibits a bug when the profile to category relation is added")
     def 'test getGroupedEnabledFilters'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
-        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2).save(flush: true, failOnError: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2, displayOrder: 2).save(flush: true, failOnError: true)
 
         when:
         def result = service.getGroupedEnabledFilters(qp1.shortName)
@@ -145,19 +145,19 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
     @Ignore("Grails GORM unit testing exhibits a bug when the profile to category relation is added")
     def 'test getJoinedQualityFilter'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1).save(flush: true, failOnError: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'filter11', enabled: true, qualityCategory: qc1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'filter12', enabled: false, qualityCategory: qc1, displayOrder: 2).save(flush: true, failOnError: true)
 
-        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
-        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2).save(flush: true, failOnError: true)
+        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: false, qualityProfile: qp1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'filter21', enabled: true, qualityCategory: qc2, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: 'filter22', enabled: false, qualityCategory: qc2, displayOrder: 2).save(flush: true, failOnError: true)
 
-        QualityCategory qc3 = new QualityCategory(name: 'name3', label: 'label3', description: 'desc3', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf31 = new QualityFilter(description: 'label31', filter: 'filter31', enabled: false, qualityCategory: qc3).save(flush: true, failOnError: true)
-        QualityFilter qf32 = new QualityFilter(description: 'label32', filter: 'filter32', enabled: true, qualityCategory: qc3).save(flush: true, failOnError: true)
+        QualityCategory qc3 = new QualityCategory(name: 'name3', label: 'label3', description: 'desc3', enabled: true, qualityProfile: qp1, displayOrder: 3).save(flush: true, failOnError: true)
+        QualityFilter qf31 = new QualityFilter(description: 'label31', filter: 'filter31', enabled: false, qualityCategory: qc3, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf32 = new QualityFilter(description: 'label32', filter: 'filter32', enabled: true, qualityCategory: qc3, displayOrder: 2).save(flush: true, failOnError: true)
 
         when:
         def result = service.getJoinedQualityFilter(qp1.shortName)
@@ -168,32 +168,32 @@ class QualityServiceSpec extends Specification implements ServiceUnitTest<Qualit
 
     def 'test inverse filter'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'a:b', enabled: true, qualityCategory: qc1).save(flush: true, failOnError: true)
-        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'b:a', enabled: true, qualityCategory: qc1).save(flush: true, failOnError: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'desc', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf11 = new QualityFilter(description: 'label11', filter: 'a:b', enabled: true, qualityCategory: qc1, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf12 = new QualityFilter(description: 'label12', filter: 'b:a', enabled: true, qualityCategory: qc1, displayOrder: 2).save(flush: true, failOnError: true)
         // not enabled
-        QualityFilter qf13 = new QualityFilter(description: 'label12', filter: 'z:y', enabled: false, qualityCategory: qc1).save(flush: true, failOnError: true)
+        QualityFilter qf13 = new QualityFilter(description: 'label12', filter: 'z:y', enabled: false, qualityCategory: qc1, displayOrder: 3).save(flush: true, failOnError: true)
 
-        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'c:[0 TO 1]', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
-        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: '-d:e', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
-        QualityFilter qf23 = new QualityFilter(description: 'label23', filter: '-e:f', enabled: true, qualityCategory: qc2).save(flush: true, failOnError: true)
+        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'desc2', enabled: true, qualityProfile: qp1, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf21 = new QualityFilter(description: 'label21', filter: 'c:[0 TO 1]', enabled: true, qualityCategory: qc2, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf22 = new QualityFilter(description: 'label22', filter: '-d:e', enabled: true, qualityCategory: qc2, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf23 = new QualityFilter(description: 'label23', filter: '-e:f', enabled: true, qualityCategory: qc2, displayOrder: 3).save(flush: true, failOnError: true)
 
-        QualityCategory qc3 = new QualityCategory(name: 'name3', label: 'label3', description: 'desc3', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf31 = new QualityFilter(description: 'label31', filter: '-f:g', enabled: true, qualityCategory: qc3).save(flush: true, failOnError: true)
+        QualityCategory qc3 = new QualityCategory(name: 'name3', label: 'label3', description: 'desc3', enabled: true, qualityProfile: qp1, displayOrder: 3).save(flush: true, failOnError: true)
+        QualityFilter qf31 = new QualityFilter(description: 'label31', filter: '-f:g', enabled: true, qualityCategory: qc3, displayOrder: 1).save(flush: true, failOnError: true)
 
-        QualityCategory qc4 = new QualityCategory(name: 'name4', label: 'label4', description: 'desc4', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf41 = new QualityFilter(description: 'label41', filter: '+f:g', enabled: true, qualityCategory: qc4).save(flush: true, failOnError: true)
+        QualityCategory qc4 = new QualityCategory(name: 'name4', label: 'label4', description: 'desc4', enabled: true, qualityProfile: qp1, displayOrder: 4).save(flush: true, failOnError: true)
+        QualityFilter qf41 = new QualityFilter(description: 'label41', filter: '+f:g', enabled: true, qualityCategory: qc4, displayOrder: 1).save(flush: true, failOnError: true)
 
-        QualityCategory qc5 = new QualityCategory(name: 'name5', label: 'label5', description: 'desc5', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf51 = new QualityFilter(description: 'label51', filter: 'f:g', enabled: true, qualityCategory: qc5).save(flush: true, failOnError: true)
+        QualityCategory qc5 = new QualityCategory(name: 'name5', label: 'label5', description: 'desc5', enabled: true, qualityProfile: qp1, displayOrder: 5).save(flush: true, failOnError: true)
+        QualityFilter qf51 = new QualityFilter(description: 'label51', filter: 'f:g', enabled: true, qualityCategory: qc5, displayOrder: 1).save(flush: true, failOnError: true)
 
-        QualityCategory qc7 = new QualityCategory(name: 'name7', label: 'label7', description: 'desc7', enabled: true, qualityProfile: qp1).save(flush: true, failOnError: true)
-        QualityFilter qf71 = new QualityFilter(description: 'label71', filter: '-c:[0 TO 1]', enabled: true, qualityCategory: qc7).save(flush: true, failOnError: true)
-        QualityFilter qf72 = new QualityFilter(description: 'label72', filter: 'd:e', enabled: true, qualityCategory: qc7).save(flush: true, failOnError: true)
-        QualityFilter qf73 = new QualityFilter(description: 'label73', filter: 'e:f', enabled: true, qualityCategory: qc7).save(flush: true, failOnError: true)
+        QualityCategory qc7 = new QualityCategory(name: 'name7', label: 'label7', description: 'desc7', enabled: true, qualityProfile: qp1, displayOrder: 6).save(flush: true, failOnError: true)
+        QualityFilter qf71 = new QualityFilter(description: 'label71', filter: '-c:[0 TO 1]', enabled: true, qualityCategory: qc7, displayOrder: 1).save(flush: true, failOnError: true)
+        QualityFilter qf72 = new QualityFilter(description: 'label72', filter: 'd:e', enabled: true, qualityCategory: qc7, displayOrder: 2).save(flush: true, failOnError: true)
+        QualityFilter qf73 = new QualityFilter(description: 'label73', filter: 'e:f', enabled: true, qualityCategory: qc7, displayOrder: 3).save(flush: true, failOnError: true)
 
 
         when:

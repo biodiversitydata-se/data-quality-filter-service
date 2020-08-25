@@ -89,7 +89,7 @@ class AdminDataQualityController {
 
     def saveQualityCategory(QualityCategory qualityCategory) {
         withForm {
-            saveQualityCategoryImpl()
+            saveQualityCategoryImpl(qualityCategory)
         }.invalidToken {
             // bad request
             log.debug("ignore duplicate save category request. name:{}, label:{}", qualityCategory.name, qualityCategory.label)
@@ -135,12 +135,19 @@ class AdminDataQualityController {
     def saveQualityFilter(QualityFilter qualityFilter) {
         def profileid = qualityFilter.qualityCategory.qualityProfile.id
         withForm {
-            saveFilterImpl()
+            try {
+                qualityService.createOrUpdateFilter(qualityFilter)
+            } catch (ValidationException e) {
+                flash.errors = e.errors
+            } catch (IllegalStateException e) {
+                return render(status: 400, text: 'invalid params')
+            }
             redirect(action: 'filters', id: profileid)
         }.invalidToken {
             // bad request
             log.debug("ignore duplicate save filter request. description:{}, filter:{}", qualityFilter.description, qualityFilter.filter)
             redirect(action: 'filters', id: profileid)
+
         }
     }
 

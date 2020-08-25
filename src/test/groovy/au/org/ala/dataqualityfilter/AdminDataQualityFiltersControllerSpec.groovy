@@ -20,10 +20,10 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test filters'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1).save(flush: true)
-        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'description', qualityProfile: qp1).save(flush: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1).save(flush: true)
+        QualityCategory qc2 = new QualityCategory(name: 'name2', label: 'label2', description: 'description', qualityProfile: qp1, displayOrder: 2).save(flush: true)
 
         when:
         params.id = qp1.id
@@ -38,9 +38,9 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test saveQualityCategory'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1)
 
         setupTokens('/admin/dataQuality/saveQualityCategory')
 
@@ -54,9 +54,9 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test saveQualityCategory failure'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1)
         ValidationErrors ve = new ValidationErrors(qc1, 'qualityCategory')
 
         setupTokens('/saveQualityCategory')
@@ -72,9 +72,9 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test enableQualityCategory'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1).save(flush: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true)
         request.addParameter('id', "${qc1.id}")
         request.addParameter('enabled', "false")
 
@@ -92,9 +92,9 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test deleteQualityCategory'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1).save(flush: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true)
 
         setupTokens('/deleteQualityCategory')
 
@@ -108,10 +108,10 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test saveQualityFilter'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1).save(flush: true)
-        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1).save(flush: true)
+        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1, displayOrder: 1)
 
         setupTokens('/saveQualityFilter')
 
@@ -125,10 +125,10 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test saveQualityFilter failure'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1).save(flush: true)
-        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1).save(flush: true)
+        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1, displayOrder: 1)
         ValidationErrors ve = new ValidationErrors(qf1, 'qualityFilter')
 
         setupTokens('/saveQualityFilter')
@@ -145,10 +145,10 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 //    @Ignore('fails only in UT for unknown reason')
     def 'test saveQualityFilter failure 2'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1).save(flush: true)
-        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', qualityProfile: qp1, displayOrder: 1).save(flush: true)
+        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1, displayOrder: 1)
         ValidationErrors ve = new ValidationErrors(qc1, 'qualityCategory')
 
         setupTokens('/saveQualityFilter')
@@ -163,10 +163,10 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test deleteQualityFilter'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1).save(flush: true)
-        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1).save(flush: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true)
+        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', qualityCategory: qc1, displayOrder: 1).save(flush: true)
         request.addParameter('id', "${qf1.id}")
         request.addParameter('profileId', "${qp1.id}")
 
@@ -182,10 +182,10 @@ class AdminDataQualityFiltersControllerSpec extends Specification implements Con
 
     def 'test enableQualityFilter'() {
         setup:
-        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true).save(flush: true)
+        QualityProfile qp1 = new QualityProfile(name: 'name', shortName: 'name', enabled: true, isDefault: true, displayOrder: 1).save(flush: true)
 
-        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1).save(flush: true)
-        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', enabled: true, qualityCategory: qc1).save(flush: true)
+        QualityCategory qc1 = new QualityCategory(name: 'name', label: 'label', description: 'description', enabled: true, qualityProfile: qp1, displayOrder: 1).save(flush: true)
+        QualityFilter qf1 = new QualityFilter(description: 'desc', filter: 'filter', enabled: true, qualityCategory: qc1, displayOrder: 1).save(flush: true)
         request.addParameter('id', "${qf1.id}")
         request.addParameter('enabled', "false")
 
