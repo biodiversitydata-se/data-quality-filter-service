@@ -72,8 +72,7 @@ class QualityService {
             projections {
                 property('filter')
             }
-//            order('qualityCategory.dateCreated')
-            order('dateCreated')
+            order('displayOrder')
         }
     }
 
@@ -89,7 +88,7 @@ class QualityService {
                 }
                 eq('enabled', true)
             }
-            order('dateCreated')
+            order('displayOrder')
         }.groupBy { QualityFilter qualityFilter ->
             qualityFilter.qualityCategory.label
         }.collectEntries { label, filters ->
@@ -397,6 +396,7 @@ class QualityService {
             if (map.containsKey('shortName')) {
                 ilike('shortName', map.shortName)
             }
+
         }
     }
 }

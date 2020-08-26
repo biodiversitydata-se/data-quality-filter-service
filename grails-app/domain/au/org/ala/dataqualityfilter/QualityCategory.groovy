@@ -36,7 +36,8 @@ class QualityCategory {
         description type: 'text'
         dateCreated index: 'quality_category_date_created_idx'
         qualityFilters sort: 'dateCreated'
-        sort 'dateCreated'
+        qualityFilters sort: 'displayOrder'
+        sort 'displayOrder'
     }
 
     static namedQueries = {

@@ -43,6 +43,8 @@ class QualityProfile {
         contactName type: 'text'
         contactEmail type: 'text'
         enabled defaultValue: 'true', index: 'quality_profile_enabled_idx'
+        categories sort: 'displayOrder'
+        sort 'displayOrder'
     }
 
     static namedQueries = {
