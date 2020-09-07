@@ -220,6 +220,11 @@
                             </table>
                         </div>
                      </td>
+                    <td style="width: 0">
+                        <g:form class="updateCategoryDisplayOrder" useToken="true">
+                            <g:hiddenField name="id" value="${category.id}"></g:hiddenField>
+                        </g:form>
+                    </td>
                 </tr>
                 </g:each>
             </g:if>
@@ -364,12 +369,26 @@
             // update category if display order changed
             if (orig_displayorders[i] !== new_displayorders[i]) {
                 orderchanged = true;
-                $.post("${g.createLink(controller: 'adminDataQuality', action: 'saveQualityCategoryViaPost')}", {
-                    id: categoryids[i],
-                    displayOrder: new_displayorders[i]
-                }).done(function(data){
-                    $(table).find('#category' + data.id).attr("data-curdisplayorder", data.displayOrder);
-                })
+
+                var form = $("#category" + categoryids[i]).find('form[class=updateCategoryDisplayOrder]');
+                var formData = $(form).serializeArray();
+                formData.push({'name':'displayOrder', 'value': new_displayorders[i]});
+                $.ajax({
+                    type: "POST",
+                    url: "${g.createLink(controller: 'adminDataQuality', action: 'saveQualityCategory')}",
+                    data: formData,
+                    dataType: 'json',
+                    accepts: {
+                        text: 'text/plain'
+                    }
+                }).done(function (data) {
+                    if (data) {
+                        $(table).find('#category' + data.category.id).attr("data-curdisplayorder", data.category.displayOrder);
+                        // update token so after each request the form has a new token
+                        var form = $("#category" + data.category.id).find('form[class=updateCategoryDisplayOrder]');
+                        $(form).find('input[name=SYNCHRONIZER_TOKEN]').val(data.token);
+                    }
+                });
             }
         }
 

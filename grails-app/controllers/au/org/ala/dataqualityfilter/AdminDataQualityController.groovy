@@ -18,6 +18,7 @@ import com.google.gson.Gson
 import grails.converters.JSON
 import grails.transaction.Transactional
 import grails.validation.ValidationException
+import org.grails.web.servlet.mvc.SynchronizerTokensHolder
 
 class AdminDataQualityController {
 
@@ -34,26 +35,33 @@ class AdminDataQualityController {
     }
 
     def saveProfile(QualityProfile qualityProfile) {
+        def invalidReq = false
         withForm {
-            saveProfileImpl(qualityProfile)
+            try {
+                qualityService.createOrUpdateProfile(qualityProfile)
+            } catch (ValidationException e) {
+                flash.errors = e.errors
+            }
         }.invalidToken {
-            // bad request
+            invalidReq = true
             log.debug("ignore duplicate save profile request. name:{}, shortName:{}", qualityProfile.name, qualityProfile.shortName)
         }
-        redirect(action: 'profiles')
-    }
 
-    def saveProfileImpl(QualityProfile qualityProfile) {
-        try {
-            qualityService.createOrUpdateProfile(qualityProfile)
-        } catch (ValidationException e) {
-            flash.errors = e.errors
+        withFormat {
+            html {
+                redirect(action: 'profiles')
+            }
+            json {
+                if (flash.errors || invalidReq) {
+                    render { } as JSON
+                } else {
+                    def rslt = [:]
+                    rslt.profile = QualityProfile.findById(qualityProfile.id)
+                    rslt.token = SynchronizerTokensHolder.store(session).generateToken(params.SYNCHRONIZER_URI)
+                    render rslt as JSON
+                }
+            }
         }
-    }
-
-    def saveProfileViaPost(QualityProfile qualityProfile) {
-        saveProfileImpl(qualityProfile)
-        render QualityProfile.findById(qualityProfile.id) as JSON
     }
 
     def enableQualityProfile() {
@@ -88,26 +96,33 @@ class AdminDataQualityController {
     }
 
     def saveQualityCategory(QualityCategory qualityCategory) {
+        def invalidReq = false
         withForm {
-            saveQualityCategoryImpl(qualityCategory)
+            try {
+                qualityService.createOrUpdateCategory(qualityCategory)
+            } catch (ValidationException e) {
+                flash.errors = e.errors
+            }
         }.invalidToken {
-            // bad request
+            invalidReq = true
             log.debug("ignore duplicate save category request. name:{}, label:{}", qualityCategory.name, qualityCategory.label)
         }
-        redirect(action: 'filters', id: qualityCategory.qualityProfile.id)
-    }
 
-    def saveQualityCategoryImpl(QualityCategory qualityCategory) {
-        try {
-            qualityService.createOrUpdateCategory(qualityCategory)
-        } catch (ValidationException e) {
-            flash.errors = e.errors
+        withFormat {
+            html {
+                redirect(action: 'filters', id: qualityCategory.qualityProfile.id)
+            }
+            json {
+                if (flash.errors || invalidReq) {
+                    render { } as JSON
+                } else {
+                    def rslt = [:]
+                    rslt.category = QualityCategory.findById(qualityCategory.id)
+                    rslt.token = SynchronizerTokensHolder.store(session).generateToken(params.SYNCHRONIZER_URI)
+                    render rslt as JSON
+                }
+            }
         }
-    }
-
-    def saveQualityCategoryViaPost(QualityCategory qualityCategory) {
-        saveQualityCategoryImpl(qualityCategory)
-        render QualityCategory.findById(qualityCategory.id) as JSON
     }
 
     def enableQualityCategory() {
