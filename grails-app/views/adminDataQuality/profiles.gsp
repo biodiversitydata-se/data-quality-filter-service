@@ -82,6 +82,9 @@
                                     <button type="submit" class="btn btn-danger" ${profile.isDefault ? 'disabled' : ''}><i class="fa fa-trash"></i></button>
                                 </g:form>
                                 <g:link action="exportProfile" id="${profile.id}"><button class="btn btn-default"><alatag:message code="dq.admin.export.profile.button" default="Export profile"/></button></g:link>
+                                <g:form class="updateProfile" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}"></g:hiddenField>
+                                </g:form>
                             </td>
                         </tr>
                     </g:each>
@@ -185,12 +188,26 @@
             for (var i = 0; i < profilesids.length; i++) {
                 // update profile if display order changed
                 if (orig_displayorders[i] !== new_displayorders[i]) {
-                    $.post("${g.createLink(controller: 'adminDataQuality', action: 'saveProfileViaPost')}", {
-                        id: profilesids[i],
-                        displayOrder: new_displayorders[i]
-                    }).done(function(data){
-                        $("#profiletable").find("#profile-" + data.id).attr("data-curdisplayorder", data.displayOrder);
-                    })
+                    var form = $("#profile-" + profilesids[i]).find('form[class=updateProfile]');
+                    var formData = $(form).serializeArray();
+                    formData.push({'name':'displayOrder', 'value': new_displayorders[i]});
+
+                    $.ajax({
+                        type: "POST",
+                        url: "${g.createLink(controller: 'adminDataQuality', action: 'saveProfile')}",
+                        data: formData,
+                        dataType: 'json',
+                        accepts: {
+                            text: 'text/plain'
+                        }
+                    }).done(function (data) {
+                        if (data) {
+                            $("#profiletable").find("#profile-" + data.profile.id).attr("data-curdisplayorder", data.profile.displayOrder);
+                            // update token so after each request the form has a new token
+                            var form = $("#profile-" + data.profile.id).find('form[class=updateProfile]');
+                            $(form).find('input[name=SYNCHRONIZER_TOKEN]').val(data.token);
+                        }
+                    });
                 }
             }
 
