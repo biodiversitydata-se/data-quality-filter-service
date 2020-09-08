@@ -112,7 +112,7 @@
                             </g:if>
                             <table id="${category.id}" data-profileid="${profile.id}" data-categorylabel="${category.label}" class="table table-responsive filterstable" style="table-layout:fixed;">
                                 <g:each in="${category.qualityFilters.sort{it.displayOrder}}" var="filter">
-                                <tr id="${'category' + category.id + 'filter' + filter.id}" class="${filter.enabled ? 'bg-default' : 'bg-warning'}" data-curdisplayorder="${filter.displayOrder}" data-filtervalue="${filter.filter}">
+                                <tr id="${'filter' + filter.id}" class="${filter.enabled ? 'bg-default' : 'bg-warning'}" data-curdisplayorder="${filter.displayOrder}" data-filtervalue="${filter.filter}">
                                     <td style="vertical-align: middle; width:15px"><img src="${assetPath(src: 'menu.png')}" class="dragHandle" data-toggle="tooltip" title="drag/drop to re-order filters"></img></td>
                                     <td>
                                         <g:form useToken="true" action="enableQualityFilter">
@@ -168,6 +168,11 @@
                                         <g:form class="form-inline" name="${filter.id}" action="deleteQualityFilter" useToken="true" style="display: inline-block;" method="post">
                                             <g:hiddenField name="id" value="${filter.id}"/>
                                             <g:hiddenField name="profileId" value="${category.qualityProfile.id}" />
+                                        </g:form>
+                                    </td>
+                                    <td style="width: 0">
+                                        <g:form class="updateFilterDisplayOrder" useToken="true">
+                                            <g:hiddenField name="id" value="${filter.id}"></g:hiddenField>
                                         </g:form>
                                     </td>
                                 </tr>
@@ -311,15 +316,11 @@
 
     // re-calculate display orders for profiles
     function handleFilterstop(table, row) {
-        var profileId = $(table).attr('data-profileid');
-        var categoryId = $(table).attr('id');
-
         var filterids = [];
         var orig_displayorders = [];
         // get filter ids (top down order) and old orders (except last row)
         $(table).children("tbody").children("tr").not(":last").each(function() {
-            var rowid = $(this).attr('id');
-            var filterid = rowid.substring(rowid.indexOf('filter')).substring(6);
+            var filterid = $(this).attr('id').substring(6);
             filterids.push(filterid)
             orig_displayorders.push(parseInt($(this).attr('data-curdisplayorder')));
         });
@@ -334,12 +335,27 @@
             // update filter if display order changed
             if (orig_displayorders[i] !== new_displayorders[i]) {
                 orderchanged = true;
-                $.post("${g.createLink(controller: 'adminDataQuality', action: 'saveFilterViaPost')}", {
-                    id: filterids[i],
-                    displayOrder: new_displayorders[i]
-                }).done(function(data){
-                    $(table).find('#category' + categoryId + 'filter' + data.id).attr("data-curdisplayorder", data.displayOrder);
-                })
+
+                var form = $("#filter" + filterids[i]).find('form[class=updateFilterDisplayOrder]');
+                var formData = $(form).serializeArray();
+                formData.push({'name':'displayOrder', 'value': new_displayorders[i]});
+
+                $.ajax({
+                    type: "POST",
+                    url: "${g.createLink(controller: 'adminDataQuality', action: 'saveQualityFilter')}",
+                    data: formData,
+                    dataType: 'json',
+                    accepts: {
+                        text: 'text/plain'
+                    }
+                }).done(function (data) {
+                    if (data) {
+                        $(table).find('#filter' + data.filter.id).attr('data-curdisplayorder', data.filter.displayOrder);
+                        // update token so after each request the form has a new token
+                        var form = $('#filter' + data.filter.id).find('form[class=updateFilterDisplayOrder]');
+                        $(form).find('input[name=SYNCHRONIZER_TOKEN]').val(data.token);
+                    }
+                });
             }
         }
 

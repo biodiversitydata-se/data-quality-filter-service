@@ -82,7 +82,7 @@
                                     <button type="submit" class="btn btn-danger" ${profile.isDefault ? 'disabled' : ''}><i class="fa fa-trash"></i></button>
                                 </g:form>
                                 <g:link action="exportProfile" id="${profile.id}"><button class="btn btn-default"><alatag:message code="dq.admin.export.profile.button" default="Export profile"/></button></g:link>
-                                <g:form class="updateProfile" useToken="true">
+                                <g:form class="updateProfileDisplayOrder" useToken="true">
                                     <g:hiddenField name="id" value="${profile.id}"></g:hiddenField>
                                 </g:form>
                             </td>
@@ -188,7 +188,7 @@
             for (var i = 0; i < profilesids.length; i++) {
                 // update profile if display order changed
                 if (orig_displayorders[i] !== new_displayorders[i]) {
-                    var form = $("#profile-" + profilesids[i]).find('form[class=updateProfile]');
+                    var form = $("#profile-" + profilesids[i]).find('form[class=updateProfileDisplayOrder]');
                     var formData = $(form).serializeArray();
                     formData.push({'name':'displayOrder', 'value': new_displayorders[i]});
 
@@ -204,7 +204,7 @@
                         if (data) {
                             $("#profiletable").find("#profile-" + data.profile.id).attr("data-curdisplayorder", data.profile.displayOrder);
                             // update token so after each request the form has a new token
-                            var form = $("#profile-" + data.profile.id).find('form[class=updateProfile]');
+                            var form = $("#profile-" + data.profile.id).find('form[class=updateProfileDisplayOrder]');
                             $(form).find('input[name=SYNCHRONIZER_TOKEN]').val(data.token);
                         }
                     });

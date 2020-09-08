@@ -149,36 +149,48 @@ class AdminDataQualityController {
 
     def saveQualityFilter(QualityFilter qualityFilter) {
         def profileid = qualityFilter.qualityCategory.qualityProfile.id
-        withForm {
-            try {
-                qualityService.createOrUpdateFilter(qualityFilter)
-            } catch (ValidationException e) {
-                flash.errors = e.errors
-            } catch (IllegalStateException e) {
-                return render(status: 400, text: 'invalid params')
+
+        withFormat{
+            html {
+                withForm {
+                    try {
+                        qualityService.createOrUpdateFilter(qualityFilter)
+                    } catch (ValidationException e) {
+                        flash.errors = e.errors
+                    } catch (IllegalStateException e) {
+                        return render(status: 400, text: 'invalid params')
+                    }
+                    redirect(action: 'filters', id: profileid)
+                }.invalidToken {
+                    // bad request
+                    log.debug("ignore duplicate save filter request. description:{}, filter:{}", qualityFilter.description, qualityFilter.filter)
+                    redirect(action: 'filters', id: profileid)
+                }
             }
-            redirect(action: 'filters', id: profileid)
-        }.invalidToken {
-            // bad request
-            log.debug("ignore duplicate save filter request. description:{}, filter:{}", qualityFilter.description, qualityFilter.filter)
-            redirect(action: 'filters', id: profileid)
+            json {
+                def succeed = false
+                withForm {
+                    try {
+                        qualityService.createOrUpdateFilter(qualityFilter)
+                        succeed = true
+                    } catch (ValidationException e) {
+                        flash.errors = e.errors
+                    }
+                }.invalidToken {
+                    // bad request
+                    log.debug("ignore duplicate save filter request. description:{}, filter:{}", qualityFilter.description, qualityFilter.filter)
+                }
 
+                if (succeed) {
+                    def rslt = [:]
+                    rslt.filter = QualityFilter.findById(qualityFilter.id)
+                    rslt.token = SynchronizerTokensHolder.store(session).generateToken(params.SYNCHRONIZER_URI)
+                    render rslt as JSON
+                } else {
+                    render { } as JSON
+                }
+            }
         }
-    }
-
-    def saveFilterImpl(QualityFilter qualityFilter) {
-        try {
-            qualityService.createOrUpdateFilter(qualityFilter)
-        } catch (ValidationException e) {
-            flash.errors = e.errors
-        } catch (IllegalStateException e) {
-            return render(status: 400, text: 'invalid params')
-        }
-    }
-
-    def saveFilterViaPost(QualityFilter qualityFilter) {
-        saveFilterImpl(qualityFilter)
-        render QualityFilter.findById(qualityFilter.id) as JSON
     }
 
     def deleteQualityFilter() {
