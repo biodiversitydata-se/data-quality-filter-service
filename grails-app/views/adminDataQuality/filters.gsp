@@ -170,7 +170,7 @@
                                             <g:hiddenField name="profileId" value="${category.qualityProfile.id}" />
                                         </g:form>
                                     </td>
-                                    <td style="width: 0">
+                                    <td style="display: none">
                                         <g:form class="updateFilterDisplayOrder" useToken="true">
                                             <g:hiddenField name="id" value="${filter.id}"></g:hiddenField>
                                         </g:form>
@@ -225,7 +225,7 @@
                             </table>
                         </div>
                      </td>
-                    <td style="width: 0">
+                    <td style="display: none">
                         <g:form class="updateCategoryDisplayOrder" useToken="true">
                             <g:hiddenField name="id" value="${category.id}"></g:hiddenField>
                         </g:form>
