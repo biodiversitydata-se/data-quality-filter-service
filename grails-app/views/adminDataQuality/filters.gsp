@@ -125,7 +125,7 @@
                                             <g:hiddenField name="id" value="${filter.id}"/>
                                             <g:hiddenField name="version" value="${filter.version}"/>
                                             <g:hiddenField name="qualityCategory" value="${category.id}" />
-                                            <div>
+                                            <div class="col-md-12" style="padding-left: 0">
                                                 <div class="col-md-3 smallpadding">
                                                     <label for="${filter.id + '-description'}">Filter Description</label>
                                                     <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
@@ -141,7 +141,7 @@
                                                 </div>
                                             </div>
 
-                                            <div class="current-filter filter-row" data-fq="${filter.filter}">
+                                            <div class="col-md-12 current-filter filter-row" style="padding-left: 0" data-fq="${filter.filter}">
                                                 <div class="col-md-3 smallpadding">
                                                     <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%" oninput="resizeTextArea(this)"/>
                                                 </div>
@@ -182,7 +182,7 @@
                                     <td>
                                         <g:form action="saveQualityFilter" class="saveFilter" useToken="true">
                                             <g:hiddenField name="qualityCategory" value="${category.id}" />
-                                            <div>
+                                            <div class="col-md-12" style="padding-left: 0">
                                                 <div class="col-md-3 smallpadding">
                                                     <label for="${category.id + '-description'}">Filter Description</label>
                                                     <button type="button" class="btn btn-xs btn-default btn-load-filter-desc" title="Load field description"><i class="fa fa-download"></i></button>
@@ -197,7 +197,7 @@
                                                     <label for="${category.id + '-generated'}">Generated Filter</label>
                                                 </div>
                                             </div>
-                                            <div class="new-filter filter-row">
+                                            <div class="col-md-12 new-filter filter-row" style="padding-left: 0">
                                                 <div class="col-md-3 smallpadding">
                                                     <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%" oninput="resizeTextArea(this)"/>
                                                 </div>
