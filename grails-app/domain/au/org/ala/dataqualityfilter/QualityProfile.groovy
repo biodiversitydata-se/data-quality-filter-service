@@ -37,6 +37,7 @@ class QualityProfile {
     }
 
     static mapping = {
+        cache true
         name type: 'text'
         shortName type: 'text'
         description type: 'text'

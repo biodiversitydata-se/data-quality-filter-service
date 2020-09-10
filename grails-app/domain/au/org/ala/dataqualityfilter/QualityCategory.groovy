@@ -30,6 +30,7 @@ class QualityCategory {
     }
 
     static mapping = {
+        cache true
         enabled defaultValue: 'true', index: 'quality_category_enabled_idx'
         name type: 'text'
         label type: 'text'

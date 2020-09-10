@@ -25,6 +25,7 @@ class QualityFilter {
     }
 
     static mapping = {
+        cache true
         enabled defaultValue: 'true', index: 'quality_filter_enabled_idx'
         dateCreated index: 'quality_filter_date_created_idx'
         sort 'displayOrder'

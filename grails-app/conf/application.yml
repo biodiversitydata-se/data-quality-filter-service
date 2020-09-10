@@ -138,9 +138,12 @@ swagger:
 
 hibernate:
     cache:
-        queries: false
-        use_second_level_cache: false
-        use_query_cache: false
+#        queries: false
+        use_second_level_cache: true
+#        use_query_cache: false
+        provider_class: net.sf.ehcache.hibernate.EhCacheProvider
+        region:
+            factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
 database:
     directory: "/data/data-quality-filter-service/database"
 
