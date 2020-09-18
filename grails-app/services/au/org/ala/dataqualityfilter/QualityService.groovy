@@ -146,6 +146,14 @@ class QualityService {
     }
 
     @Transactional(readOnly = true)
+    Map<String, String> getAllInverseCategoryFilters(Long profileId) {
+        def qp = QualityProfile.get(profileId)
+        qp ? qp?.getCategories()?.collectEntries { qc ->
+            [(qc.label): getInverseCategoryFilter(qc)]
+        } : [:]
+    }
+
+    @Transactional(readOnly = true)
     String getInverseCategoryFilter(QualityCategory category) {
         PrecedenceQueryParser qp = new PrecedenceQueryParser()
         qp.setAllowLeadingWildcard(true)

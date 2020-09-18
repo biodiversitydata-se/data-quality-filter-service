@@ -120,7 +120,7 @@ class QualityController {
     }
 
     @ApiOperation(
-            value = "Get the full inverse filter string for a given quality qualityProfile",
+            value = "Get the full inverse filter string for a given quality category",
             nickname = "getInverseCategoryFilter",
             produces = "text/plain",
             httpMethod = "GET"
@@ -138,6 +138,23 @@ class QualityController {
         } else {
             render result, contentType: 'text/plain'
         }
+    }
+
+    @ApiOperation(
+            value = "Get all the inverse filter strings for a given quality Profile",
+            nickname = "getAllInverseCategoryFiltersForProfile",
+            produces = "application/json",
+            httpMethod = "GET"
+    )
+    @ApiResponses([
+            @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "Map")
+    ])
+    @ApiImplicitParams([
+            @ApiImplicitParam(name = "qualityProfileId", paramType = "query", required = false, value = "Quality Profile Id", dataType = 'integer')
+    ])
+    def getAllInverseCategoryFiltersForProfile() {
+        def result = qualityService.getAllInverseCategoryFilters(params.long('qualityProfileId'))
+        render result as JSON
     }
 
 }
