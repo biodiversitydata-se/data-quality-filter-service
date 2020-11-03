@@ -25,12 +25,14 @@ class AdminDataQualityController {
     def qualityService
     def webServicesService
 
+    static dataProfilePageName = 'dataprofiles'
+
     def filters() {
         def qp = QualityProfile.get(params.long('id'))
         respond QualityCategory.findAllByQualityProfile(qp, [sort: 'id', lazy: false]), model: [ 'qualityFilterStrings' : qualityService.getEnabledFiltersByLabel(qp.shortName), 'errors': flash.errors, 'options': webServicesService.getAllOccurrenceFields(), 'profile': qp ]
     }
 
-    def profiles() {
+    def dataprofiles() {
         respond QualityProfile.list(sort: 'id'), model: ['errors': flash.errors]
     }
 
@@ -49,7 +51,7 @@ class AdminDataQualityController {
 
         withFormat {
             html {
-                redirect(action: 'profiles')
+                redirect(action: dataProfilePageName)
             }
             json {
                 if (flash.errors || invalidReq) {
@@ -73,7 +75,7 @@ class AdminDataQualityController {
             // bad request
             log.debug("ignore duplicate enable category request")
         }
-        redirect(action: 'profiles')
+        redirect(action: dataProfilePageName)
     }
 
     def setDefaultProfile() {
@@ -82,7 +84,7 @@ class AdminDataQualityController {
         }.invalidToken {
             log.debug('set default profile invalid token')
         }
-        redirect(action: 'profiles')
+        redirect(action: dataProfilePageName)
     }
 
     def deleteQualityProfile(QualityProfile qualityProfile) {
@@ -92,7 +94,7 @@ class AdminDataQualityController {
             // bad request
             log.debug("ignore duplicate delete profile request. name: {}, shortname: {}", qualityProfile.name, qualityProfile.shortName)
         }
-        redirect(action: 'profiles')
+        redirect(action: dataProfilePageName)
     }
 
     def saveQualityCategory(QualityCategory qualityCategory) {
@@ -289,7 +291,7 @@ class AdminDataQualityController {
             break
         }
 
-        redirect(action: 'profiles')
+        redirect(action: dataProfilePageName)
     }
 
     def fieldDescription(String field, String include, String value) {

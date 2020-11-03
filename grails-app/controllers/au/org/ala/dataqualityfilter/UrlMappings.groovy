@@ -2,7 +2,7 @@ package au.org.ala.dataqualityfilter
 
 class UrlMappings {
 	static mappings = {
-        "/"(redirect: "/profiles")
+        "/"(redirect: "/dataprofiles")
 
         "/$action?/$id?(.$format)?"(controller:'adminDataQuality')
 

@@ -161,7 +161,7 @@ headerAndFooter:
 
 security:
     cas:
-        uriFilterPattern: '/profiles,/filters/*,/download.*'
+        uriFilterPattern: '/dataprofiles,/filters/*,/download.*'
         authenticateOnlyIfLoggedInPattern: '/occurrences/(?!.+userAssertions|facet.+).+,/explore/your-area,/query,/proxy/download/.*'
         uriExclusionFilterPattern: '/occurrences/shapeUpload,/images.*,/css.*,/js.*,.*json,/help/.*'
 
