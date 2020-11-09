@@ -11,7 +11,7 @@ import io.swagger.annotations.ApiResponses
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
 import static javax.servlet.http.HttpServletResponse.SC_OK
 
-@Api(value = "/api/v1/quality/", tags = ["QualityServiceRPC"], description = "Data Quality web services to support biocache-hubs directly")
+@Api(value = "/api/v1/quality/", tags = ["QualityServiceRPC"], description = "Data Quality web services to support biocache-hubs functions")
 class QualityController {
 
     static responseFormats = ['json']
@@ -20,7 +20,7 @@ class QualityController {
     def qualityService
 
     @ApiOperation(
-            value = "Get enabled filters, grouped by category label",
+            value = "Get enabled filters, grouped by category label for a given profile name",
             nickname = "getEnabledFiltersByLabel",
             produces = "application/json",
             httpMethod = "GET"
@@ -88,7 +88,7 @@ class QualityController {
     }
 
     @ApiOperation(
-            value = "Retrieve the filter qualityProfile for a given qualityProfile name",
+            value = "Retrieve the data profile for a given profile's short name.  If the profile doesn't exist or the short name is omitted then the default profile is returned instead.",
             nickname = "activeProfile",
             produces = "application/json",
             httpMethod = "GET"
@@ -97,14 +97,14 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile)
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "The profile short name", dataType = 'string')
     ])
     def activeProfile(String profileName) {
         render qualityService.activeProfile(profileName) as JSON
     }
 
     @ApiOperation(
-            value = "Get the full filter string for a given quality qualityProfile",
+            value = "Get the full filter string for a given data profile",
             nickname = "getJoinedQualityFilter",
             produces = "text/plain",
             httpMethod = "GET"
@@ -141,7 +141,7 @@ class QualityController {
     }
 
     @ApiOperation(
-            value = "Get all the inverse filter strings for a given quality Profile",
+            value = "Get all the inverse filter strings for a given data profile",
             nickname = "getAllInverseCategoryFiltersForProfile",
             produces = "application/json",
             httpMethod = "GET"

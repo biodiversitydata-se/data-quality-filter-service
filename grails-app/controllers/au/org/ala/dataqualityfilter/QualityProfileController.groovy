@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiResponses
 
 import static javax.servlet.http.HttpServletResponse.SC_OK
 
-@Api(value = "/api/v1/", tags = ["profiles"], description = "Data Quality RESTful API for Quality Profiles")
+@Api(value = "/api/v1/", tags = ["data-profiles"], description = "Data Quality RESTful API for Quality Profiles")
 class QualityProfileController extends RestfulController<QualityProfile> {
 
     static responseFormats = ['json']
@@ -33,7 +33,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
 
     @ApiOperation(
             value = "List all quality profiles",
-            nickname = "profiles",
+            nickname = "data-profiles",
             produces = "application/json",
             httpMethod = "GET"
     )
@@ -44,7 +44,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
             @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer'),
             @ApiImplicitParam(name = "offset", paramType = "query", required = false, value = "Offset results by", dataType = 'integer'),
             @ApiImplicitParam(name = "sort", paramType = "query", required = false, value = "Property to sort results by", dataType = 'string'),
-            @ApiImplicitParam(name = "desc", paramType = "query", required = false, value = "Direction to sort results by", dataType = 'string'),
+            @ApiImplicitParam(name = "order", paramType = "query", required = false, value = "Direction to sort results by", dataType = 'string'),
             @ApiImplicitParam(name = "enabled", paramType = "query", required = false, value = "Only return enabled profiles", dataType = 'boolean'),
             @ApiImplicitParam(name = "name", paramType = "query", required = false, value = "Search for profiles by name", dataType = 'string'),
             @ApiImplicitParam(name = "shortName", paramType = "query", required = false, value = "Search for profiles by short name", dataType = 'string')
@@ -55,7 +55,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
 
     @ApiOperation(
             value = "Retrieve a single quality profile",
-            nickname = "profiles/{id}",
+            nickname = "data-profiles/{id}",
             produces = "application/json",
             httpMethod = "GET"
     )

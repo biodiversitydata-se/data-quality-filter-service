@@ -10,7 +10,7 @@ import io.swagger.annotations.ApiResponses
 
 import static javax.servlet.http.HttpServletResponse.SC_OK
 
-@Api(value = "/api/v1/profiles/{profileId}/", tags = ["categories"], description = "Data Quality RESTful API for Quality Categories")
+@Api(value = "/api/v1/data-profiles/{profileId}/", tags = ["categories"], description = "Data Quality RESTful API for Quality Categories")
 class QualityCategoryController extends RestfulController<QualityCategory> {
 
     static responseFormats = ['json']

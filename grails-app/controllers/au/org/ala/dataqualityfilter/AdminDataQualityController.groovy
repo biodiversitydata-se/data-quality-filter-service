@@ -16,23 +16,26 @@ package au.org.ala.dataqualityfilter
 
 import com.google.gson.Gson
 import grails.converters.JSON
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 import grails.validation.ValidationException
 import org.grails.web.servlet.mvc.SynchronizerTokensHolder
 
 class AdminDataQualityController {
 
+    public static final String DATA_PROFILES_ACTION_NAME = 'profiles'
     def qualityService
     def webServicesService
-
-    static dataProfilePageName = 'dataprofiles'
 
     def filters() {
         def qp = QualityProfile.get(params.long('id'))
         respond QualityCategory.findAllByQualityProfile(qp, [sort: 'id', lazy: false]), model: [ 'qualityFilterStrings' : qualityService.getEnabledFiltersByLabel(qp.shortName), 'errors': flash.errors, 'options': webServicesService.getAllOccurrenceFields(), 'profile': qp ]
     }
 
-    def dataprofiles() {
+    def profiles() {
+        redirect action: DATA_PROFILES_ACTION_NAME
+    }
+
+    def 'data-profiles'() {
         respond QualityProfile.list(sort: 'id'), model: ['errors': flash.errors]
     }
 
@@ -51,7 +54,7 @@ class AdminDataQualityController {
 
         withFormat {
             html {
-                redirect(action: dataProfilePageName)
+                redirect(action: DATA_PROFILES_ACTION_NAME)
             }
             json {
                 if (flash.errors || invalidReq) {
@@ -75,7 +78,7 @@ class AdminDataQualityController {
             // bad request
             log.debug("ignore duplicate enable category request")
         }
-        redirect(action: dataProfilePageName)
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def setDefaultProfile() {
@@ -84,7 +87,7 @@ class AdminDataQualityController {
         }.invalidToken {
             log.debug('set default profile invalid token')
         }
-        redirect(action: dataProfilePageName)
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def deleteQualityProfile(QualityProfile qualityProfile) {
@@ -94,7 +97,7 @@ class AdminDataQualityController {
             // bad request
             log.debug("ignore duplicate delete profile request. name: {}, shortname: {}", qualityProfile.name, qualityProfile.shortName)
         }
-        redirect(action: dataProfilePageName)
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def saveQualityCategory(QualityCategory qualityCategory) {
@@ -291,7 +294,7 @@ class AdminDataQualityController {
             break
         }
 
-        redirect(action: dataProfilePageName)
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def fieldDescription(String field, String include, String value) {

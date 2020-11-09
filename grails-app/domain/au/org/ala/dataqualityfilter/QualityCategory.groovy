@@ -36,7 +36,6 @@ class QualityCategory {
         label type: 'text'
         description type: 'text'
         dateCreated index: 'quality_category_date_created_idx'
-        qualityFilters sort: 'dateCreated'
         qualityFilters sort: 'displayOrder'
         sort 'displayOrder'
     }

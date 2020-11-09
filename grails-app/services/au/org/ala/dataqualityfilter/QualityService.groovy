@@ -118,6 +118,12 @@ class QualityService {
         QualityCategory.findAllByQualityProfileAndEnabled(qp, true).findAll { category -> category.qualityFilters?.findAll { it.enabled }?.size() > 0 }
     }
 
+    /**
+     * Get the profile for a given profile short name or return the default profile if the
+     * profile name doesn't exist.
+     * @param profileName The profile short name to lookup
+     * @return The profile that matches the name or the default profile
+     */
     QualityProfile activeProfile(String profileName) {
         QualityProfile qp
         if (profileName) {
