@@ -22,7 +22,7 @@ import org.grails.web.servlet.mvc.SynchronizerTokensHolder
 
 class AdminDataQualityController {
 
-    public static final String DATA_PROFILES_ACTION_NAME = 'profiles'
+    public static final String DATA_PROFILES_ACTION_NAME = 'data-profiles'
     def qualityService
     def webServicesService
 
