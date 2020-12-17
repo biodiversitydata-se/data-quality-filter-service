@@ -54,13 +54,13 @@ class QualityService {
     }
 
     @Transactional(readOnly = true)
-    Map<String, String> getEnabledFiltersByLabel(String profileName) {
-        getGroupedEnabledFilters(profileName).collectEntries { [(it.key): it.value*.filter.join(' AND ')] }
+    Map<String, String> getEnabledFiltersByLabel(String profileName = null, String userId = null) {
+        getGroupedEnabledFilters(profileName, userId).collectEntries { [(it.key): it.value*.filter.join(' AND ')] } as Map<String, String>
     }
 
     @Transactional(readOnly = true)
-    List<String> getEnabledQualityFilters(String profileName) {
-        QualityProfile qp = activeProfile(profileName)
+    List<String> getEnabledQualityFilters(String profileName = null, String userId = null) {
+        QualityProfile qp = activeProfile(profileName, userId)
         QualityFilter.withCriteria {
             eq('enabled', true)
             qualityCategory {
@@ -73,12 +73,12 @@ class QualityService {
                 property('filter')
             }
             order('displayOrder')
-        }
+        } as List<String>
     }
 
     @Transactional(readOnly = true)
-    Map<String, List<QualityFilter>> getGroupedEnabledFilters(String profileName) {
-        QualityProfile qp = activeProfile(profileName)
+    Map<String, List<QualityFilter>> getGroupedEnabledFilters(String profileName = null, String userId = null) {
+        QualityProfile qp = activeProfile(profileName, userId)
 
         QualityFilter.withCriteria {
             eq('enabled', true)
@@ -97,8 +97,8 @@ class QualityService {
     }
 
     @Transactional(readOnly = true)
-    Map<QualityCategory, List<QualityFilter>> getEnabledCategoriesAndFilters(String profileName) {
-        QualityProfile qp = activeProfile(profileName)
+    Map<QualityCategory, List<QualityFilter>> getEnabledCategoriesAndFilters(String profileName = null, String userId = null) {
+        QualityProfile qp = activeProfile(profileName, userId)
         QualityFilter.withCriteria {
             eq('enabled', true)
             qualityCategory {
@@ -113,8 +113,8 @@ class QualityService {
     }
 
     @Transactional(readOnly = true)
-    List<QualityCategory> findAllEnabledCategories(String profileName) {
-        QualityProfile qp = activeProfile(profileName)
+    List<QualityCategory> findAllEnabledCategories(String profileName = null, String userId = null) {
+        QualityProfile qp = activeProfile(profileName, userId)
         QualityCategory.findAllByQualityProfileAndEnabled(qp, true).findAll { category -> category.qualityFilters?.findAll { it.enabled }?.size() > 0 }
     }
 
@@ -124,25 +124,34 @@ class QualityService {
      * @param profileName The profile short name to lookup
      * @return The profile that matches the name or the default profile
      */
-    QualityProfile activeProfile(String profileName) {
-        QualityProfile qp
+    QualityProfile activeProfile(String profileName, String userId) {
+        QualityProfile qp = null
+
+        // if find by name
         if (profileName) {
             qp = QualityProfile.findByShortName(profileName)
-            if (!qp) {
-                qp = getDefaultProfile()
+            if (qp) {
+                return qp
             }
-        } else {
-            qp = getDefaultProfile()
         }
-        return qp
+
+        // if userId specified, return his profile if enabled, one person can have 1 profile now
+        if (userId) {
+            qp = QualityProfile.findByUserId(userId)
+            if (qp?.enabled) {
+                return qp
+            }
+        }
+
+        return getDefaultProfile()
     }
 
     QualityProfile getDefaultProfile() {
         QualityProfile.findByIsDefault(true)
     }
 
-    String getJoinedQualityFilter(String profileName) {
-        getEnabledQualityFilters(profileName).join(' AND ')
+    String getJoinedQualityFilter(String profileName = null, String userId = null) {
+        getEnabledQualityFilters(profileName, userId).join(' AND ')
     }
 
     @Transactional(readOnly = true)
@@ -411,6 +420,14 @@ class QualityService {
                 ilike('shortName', map.shortName)
             }
 
-        }
+            if (map.containsKey('userId')) {
+                or {
+                    eq('userId', map.userId)
+                    isNull('userId')
+                }
+            } else {
+                isNull('userId')
+            }
+        } as List<QualityProfile>
     }
 }

@@ -29,10 +29,11 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "Map")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to get the default profile in case profile name is not provided", dataType = 'string')
     ])
-    def getEnabledFiltersByLabel(String profileName) {
-        render qualityService.getEnabledFiltersByLabel(profileName) as JSON
+    def getEnabledFiltersByLabel(String profileName, String userId) {
+        render qualityService.getEnabledFiltersByLabel(profileName, userId) as JSON
     }
     final class GetEnabledFiltersByLabelResponse extends LinkedHashMap<String, String> {}
 
@@ -46,10 +47,11 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to get the default profile in case profile name is not provided", dataType = 'string')
     ])
-    def getEnabledQualityFilters(String profileName) {
-        render qualityService.getEnabledQualityFilters(profileName) as JSON
+    def getEnabledQualityFilters(String profileName, String userId) {
+        render qualityService.getEnabledQualityFilters(profileName, userId) as JSON
     }
 
     /** This class is unused other than to provides the type information for the OpenAPI definition */
@@ -65,10 +67,11 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = GetGroupedEnabledFiltersResponse) // , responseContainer = "Map"
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to get the default profile in case profile name is not provided", dataType = 'string')
     ])
-    def getGroupedEnabledFilters(String profileName) {
-        render qualityService.getGroupedEnabledFilters(profileName) as JSON
+    def getGroupedEnabledFilters(String profileName, String userId) {
+        render qualityService.getGroupedEnabledFilters(profileName, userId) as JSON
     }
 
     @ApiOperation(
@@ -81,10 +84,11 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityCategory, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to get the default profile in case profile name is not provided", dataType = 'string')
     ])
-    def findAllEnabledCategories(String profileName) {
-        render qualityService.findAllEnabledCategories(profileName) as JSON
+    def findAllEnabledCategories(String profileName, String userId) {
+        render qualityService.findAllEnabledCategories(profileName, userId) as JSON
     }
 
     @ApiOperation(
@@ -97,10 +101,11 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile)
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "The profile short name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "The profile short name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to get active profile in case profile name is not provided", dataType = 'string')
     ])
-    def activeProfile(String profileName) {
-        render qualityService.activeProfile(profileName) as JSON
+    def activeProfile(String profileName, String userId) {
+        render qualityService.activeProfile(profileName, userId) as JSON
     }
 
     @ApiOperation(
@@ -113,10 +118,11 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String)
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to get the default profile in case profile name is not provided", dataType = 'string')
     ])
-    def getJoinedQualityFilter(String profileName) {
-        render qualityService.getJoinedQualityFilter(profileName), contentType: 'text/plain'
+    def getJoinedQualityFilter(String profileName, String userId) {
+        render qualityService.getJoinedQualityFilter(profileName, userId), contentType: 'text/plain'
     }
 
     @ApiOperation(
@@ -156,5 +162,4 @@ class QualityController {
         def result = qualityService.getAllInverseCategoryFilters(params.long('qualityProfileId'))
         render result as JSON
     }
-
 }

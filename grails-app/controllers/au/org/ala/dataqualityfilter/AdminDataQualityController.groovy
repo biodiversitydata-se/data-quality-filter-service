@@ -25,6 +25,7 @@ class AdminDataQualityController {
     public static final String DATA_PROFILES_ACTION_NAME = 'data-profiles'
     def qualityService
     def webServicesService
+    def userService
 
     def filters() {
         def qp = QualityProfile.get(params.long('id'))
@@ -36,7 +37,20 @@ class AdminDataQualityController {
     }
 
     def 'data-profiles'() {
-        respond QualityProfile.list(sort: 'id'), model: ['errors': flash.errors]
+        def model = [:]
+        // if admin, add public profiles
+        if (userService.isLoggedInAdmin()) {
+            model.put('publicProfiles', QualityProfile.findAll(sort:"id") {
+                isPublic == true
+            })
+        }
+        // always add private profiles
+        model.put('privateProfiles', QualityProfile.findAll(sort:"id") {
+            userId == userService.getLoggedInUserId()
+        })
+        model.put('userId', userService.getLoggedInUserId())
+        model.put('errors', flash.errors)
+        model
     }
 
     def saveProfile(QualityProfile qualityProfile) {
@@ -58,7 +72,7 @@ class AdminDataQualityController {
             }
             json {
                 if (flash.errors || invalidReq) {
-                    render { } as JSON
+                    render {} as JSON
                 } else {
                     def rslt = [:]
                     rslt.profile = QualityProfile.findById(qualityProfile.id)
@@ -286,6 +300,7 @@ class AdminDataQualityController {
                     break;
                 }
 
+                profile.userId = request.getParameter('userId') ?: null
                 // safe whole profile, if any filed fails validation an exception will be thrown
                 qualityService.createOrUpdateProfile(profile)
             } catch (ValidationException e) {

@@ -47,7 +47,8 @@ class QualityProfileController extends RestfulController<QualityProfile> {
             @ApiImplicitParam(name = "order", paramType = "query", required = false, value = "Direction to sort results by", dataType = 'string'),
             @ApiImplicitParam(name = "enabled", paramType = "query", required = false, value = "Only return enabled profiles", dataType = 'boolean'),
             @ApiImplicitParam(name = "name", paramType = "query", required = false, value = "Search for profiles by name", dataType = 'string'),
-            @ApiImplicitParam(name = "shortName", paramType = "query", required = false, value = "Search for profiles by short name", dataType = 'string')
+            @ApiImplicitParam(name = "shortName", paramType = "query", required = false, value = "Search for profiles by short name", dataType = 'string'),
+            @ApiImplicitParam(name = "userId", paramType = "query", required = false, value = "the userId used to search private profiles", dataType = 'string')
     ])
     def index(Integer max) {
         super.index(max)
