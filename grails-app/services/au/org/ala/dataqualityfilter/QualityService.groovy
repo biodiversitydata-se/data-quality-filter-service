@@ -245,6 +245,14 @@ class QualityService {
 
     @Transactional
     void createOrUpdateProfile(QualityProfile qualityProfile) {
+        // if you are creating a private profile
+        if (!qualityProfile.id && qualityProfile.userId) {
+            List<QualityCategory> existingProfiles = QualityProfile.findAllByUserId(qualityProfile.userId) as List<QualityCategory>
+            if (existingProfiles.size() >= 1) {
+                throw new MaximumRecordNumberReachedException('You can only have 1 private profile')
+            }
+        }
+
         if (qualityProfile.displayOrder == null) {
             qualityProfile.displayOrder = (QualityProfile.selectMaxDisplayOrder().get() ?: 0) + 1
         }

@@ -4,12 +4,12 @@
         <g:set var="disableCreate" value="${type == 'private' && profiles != null && profiles.size() == 1}"/>
 
         <g:if test="${disableCreate}">
-            <a class="addProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#save-profile-modal" data-type="${type}" data-userId="${userId}" disabled><alatag:message code="add.profile.button" default="Add Profile" /></a>
-            <a class="importProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#import-profile-modal" data-type="${type}" data-userId="${userId}" disabled><alatag:message code="dq.admin.import.profile.button" default="Import a profile"/></a>
+            <a class="addProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#save-profile-modal" data-isPublicProfile="${type == 'public'}" disabled><alatag:message code="add.profile.button" default="Add Profile" /></a>
+            <a class="importProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#import-profile-modal" data-isPublicProfile="${type == 'public'}" disabled><alatag:message code="dq.admin.import.profile.button" default="Import a profile"/></a>
         </g:if>
         <g:else>
-            <a class="addProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#save-profile-modal" data-type="${type}" data-userId="${userId}"><alatag:message code="add.profile.button" default="Add Profile" /></a>
-            <a class="importProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#import-profile-modal" data-type="${type}" data-userId="${userId}"><alatag:message code="dq.admin.import.profile.button" default="Import a profile"/></a>
+            <a class="addProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#save-profile-modal" data-isPublicProfile="${type == 'public'}"><alatag:message code="add.profile.button" default="Add Profile" /></a>
+            <a class="importProfileLink btn btn-primary" role="button" data-toggle="modal" data-target="#import-profile-modal" data-isPublicProfile="${type == 'public'}"><alatag:message code="dq.admin.import.profile.button" default="Import a profile"/></a>
         </g:else>
 
     </div>
@@ -39,7 +39,7 @@
                             </g:form>
                         </td>
                         <td style="width:30%">
-                            <button data-id="${profile.id}" data-name="${profile.name}" data-short-name="${profile.shortName}" data-description="${profile.description}" data-contact-name="${profile.contactName}" data-contact-email="${profile.contactEmail}" data-is-default="${profile.isDefault}" data-enabled="${profile.enabled}" data-type="${type}" data-userId="${userId}" class="btn btn-default btn-edit-profile"><i class="fa fa-edit"></i></button>
+                            <button data-id="${profile.id}" data-name="${profile.name}" data-short-name="${profile.shortName}" data-description="${profile.description}" data-contact-name="${profile.contactName}" data-contact-email="${profile.contactEmail}" data-is-default="${profile.isDefault}" data-enabled="${profile.enabled}" data-isPublicProfile="${type == 'public'}" class="btn btn-default btn-edit-profile"><i class="fa fa-edit"></i></button>
                             <g:if test="${enableDefault}">
                                 <g:form action="setDefaultProfile" class="form-inline" style="display:inline;" useToken="true">
                                     <g:hiddenField name="id" value="${profile.id}" />

@@ -62,7 +62,7 @@
                         <g:hiddenField name="id" value="" />
                         <g:hiddenField name="enabled" value="false" />
                         <g:hiddenField name="isDefault" value="false" />
-                        <g:hiddenField name="userId" value=""/>
+                        <g:hiddenField name="isPublicProfile"/>
                         <div class="form-group">
                             <label for="name"><alatag:message code="profile.modal.name.label" default="Name" /></label>
                             <input type="text" class="form-control" id="name" name="name" placeholder="Name">
@@ -103,7 +103,7 @@
                 </div>
                 <div class="modal-body">
                     <g:form name="import-profile-form" action="importProfile" enctype="multipart/form-data" useToken="true">
-                        <g:hiddenField name="userId" value=""/>
+                        <g:hiddenField name="isPublicProfile"/>
                         <input type="file" name="filejson"/>
                     </g:form>
                 </div>
@@ -191,22 +191,16 @@
         });
 
         $('.addProfileLink, .importProfileLink').click(function() {
-            var type = $(this).attr('data-type');
-            var uid = $(this).attr('data-userId');
-
-            var uidControl = null;
+            var isPublicControl = null;
             var className = $(this).attr('class');
+
             if (className.indexOf('addProfileLink') !== -1) {
-                uidControl = $('#save-profile-modal form').find('input[name=userId]');
+                isPublicControl = $('#save-profile-modal form').find('input[name=isPublicProfile]');
             } else if (className.indexOf('importProfileLink') !== -1) {
-                uidControl = $('#import-profile-modal form').find('input[name=userId]');
+                isPublicControl = $('#import-profile-modal form').find('input[name=isPublicProfile]');
             }
 
-            if (type === 'public') {
-                $(uidControl).val("");
-            } else if (type === 'private') {
-                $(uidControl).val(uid);
-            }
+            $(isPublicControl).val($(this).attr('data-isPublicProfile'))
         })
 
         $('.btn-edit-profile').on('click', function(e) {
@@ -219,8 +213,7 @@
             var contactEmail  = $this.data('contact-email');
             var enabled = $this.data('enabled');
             var isDefault = $this.data('is-default');
-            var userId = $this.attr('data-userId');
-            var type = $this.attr('data-type');
+            var isPublicProfile = $this.data('isPublicProfile');
 
             var $saveProfileModal = $('#save-profile-modal');
 
@@ -232,7 +225,7 @@
             var $contactEmail = $saveProfileModal.find('input[name=contactEmail]');
             var $enabled = $saveProfileModal.find('input[name=enabled]');
             var $isDefault = $saveProfileModal.find('input[name=isDefault]');
-            var $uidControl = $saveProfileModal.find('input[name=userId]');
+            var $isPublicProfile = $saveProfileModal.find('input[name=isPublicProfile]');
 
             var oldId = $id.val();
             var oldName = $name.val();
@@ -251,11 +244,7 @@
             $contactEmail.val(contactEmail);
             $enabled.val(enabled);
             $isDefault.val(isDefault);
-            if (type === 'public') {
-                $uidControl.val("");
-            } else if (type === 'private') {
-                $uidControl.val(userId);
-            }
+            $isPublicProfile.val(isPublicProfile);
 
             var clearFormFn = function() {
                 $id.val(oldId);
