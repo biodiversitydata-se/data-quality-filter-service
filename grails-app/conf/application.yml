@@ -176,11 +176,7 @@ environments:
         security:
             cas:
                 appServerName: "http://dev.ala.org.au"
-                casServerName: "https://auth-test.ala.org.au"
-                casServerUrlPrefix: ${security.cas.casServerName}/cas
-                loginUrl: ${security.cas.casServerUrlPrefix}/login
-                logoutUrl: ${security.cas.casServerUrlPrefix}/logout
-                contextPath: "/data-quality"
+
     test:
         security:
             cas:
