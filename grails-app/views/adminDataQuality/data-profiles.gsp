@@ -213,7 +213,7 @@
             var contactEmail  = $this.data('contact-email');
             var enabled = $this.data('enabled');
             var isDefault = $this.data('is-default');
-            var isPublicProfile = $this.data('isPublicProfile');
+            var isPublicProfile = $this.attr('data-isPublicProfile')
 
             var $saveProfileModal = $('#save-profile-modal');
 

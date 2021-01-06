@@ -179,7 +179,7 @@ class AdminDataQualityController {
     def saveQualityFilter(QualityFilter qualityFilter) {
         def profileid = qualityFilter.qualityCategory.qualityProfile.id
 
-        withFormat{
+        withFormat {
             html {
                 withForm {
                     try {
@@ -323,7 +323,6 @@ class AdminDataQualityController {
             }
             break
         }
-
         redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
