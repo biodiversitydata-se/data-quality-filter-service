@@ -65,23 +65,20 @@ class AdminDataQualityController {
             } catch (MaximumRecordNumberReachedException e) {
                 flash.message = e.message
             }
-        }.invalidToken {
-            invalidReq = true
-            log.debug("ignore duplicate save profile request. name:{}, shortName:{}", qualityProfile.name, qualityProfile.shortName)
-        }
 
-        withFormat {
-            html {
-                redirect(action: DATA_PROFILES_ACTION_NAME)
-            }
-            json {
-                if (flash.errors || invalidReq) {
-                    render {} as JSON
-                } else {
-                    def rslt = [:]
-                    rslt.profile = QualityProfile.findById(qualityProfile.id)
-                    rslt.token = SynchronizerTokensHolder.store(session).generateToken(params.SYNCHRONIZER_URI)
-                    render rslt as JSON
+            withFormat {
+                html {
+                    redirect(action: DATA_PROFILES_ACTION_NAME)
+                }
+                json {
+                    if (flash.errors || invalidReq) {
+                        render {} as JSON
+                    } else {
+                        def rslt = [:]
+                        rslt.profile = QualityProfile.findById(qualityProfile.id)
+                        rslt.token = SynchronizerTokensHolder.store(session).generateToken(params.SYNCHRONIZER_URI)
+                        render rslt as JSON
+                    }
                 }
             }
         }
@@ -249,7 +246,8 @@ class AdminDataQualityController {
     }
 
     def exportProfile() {
-        QualityProfile profile = QualityProfile.get(params.long('id'))
+        if (shouldProcess(params.userId)) {
+            QualityProfile profile = QualityProfile.get(params.long('id'))
 
         if (processAllowed(profile)) {
             if (profile) {
@@ -266,22 +264,23 @@ class AdminDataQualityController {
 
     @Transactional
     def importProfile() {
-        while (true) {
-            def f = request.getFile('filejson')
-            // if file not selected or empty
-            if (f == null || f.empty) {
-                flash.message = 'File selected is empty'
-                break
-            }
+        if (shouldProcess(request.getParameter('userId'))) {
+            while (true) {
+                def f = request.getFile('filejson')
+                // if file not selected or empty
+                if (f == null || f.empty) {
+                    flash.message = 'File selected is empty'
+                    break
+                }
 
-            QualityProfile profile = null
-            try {
-                // convert json to QualityProfile
-                profile = new Gson().fromJson(new InputStreamReader(f.getInputStream()), QualityProfile.class);
-            } catch (e) {
-                flash.message = e.getLocalizedMessage()
-                break
-            }
+                QualityProfile profile = null
+                try {
+                    // convert json to QualityProfile
+                    profile = new Gson().fromJson(new InputStreamReader(f.getInputStream()), QualityProfile.class);
+                } catch (e) {
+                    flash.message = e.getLocalizedMessage()
+                    break
+                }
 
             preprocessProfile(profile)
 
@@ -289,30 +288,41 @@ class AdminDataQualityController {
                 // set profile display order, there may already have existing profiles, so new display order = current max + 1
                 profile.displayOrder = (QualityProfile.selectMaxDisplayOrder().get() ?: 0) + 1
 
-                // setup mapping
-                // since we are creating a new profile, displayOrders of categories within it should start from 1
-                Long categoryDisplayOrder = 1
-                for (QualityCategory category : profile.categories) {
-                    category.qualityProfile = profile
-                    if (category.displayOrder == null) {
-                        category.displayOrder = categoryDisplayOrder++
-                    }
+                    // setup mapping
+                    // since we are creating a new profile, displayOrders of categories within it should start from 1
+                    Long categoryDisplayOrder = 1
+                    for (QualityCategory category : profile.categories) {
+                        category.qualityProfile = profile
+                        if (category.displayOrder == null) {
+                            category.displayOrder = categoryDisplayOrder++
+                        }
 
-                    // within a category, filter displayOrder starts from 1
-                    Long filterDisplayOrder = 1;
-                    for (QualityFilter filter : category.qualityFilters) {
-                        filter.qualityCategory = category
-                        if (filter.displayOrder == null) {
-                            filter.displayOrder = filterDisplayOrder++;
+                        // within a category, filter displayOrder starts from 1
+                        Long filterDisplayOrder = 1;
+                        for (QualityFilter filter : category.qualityFilters) {
+                            filter.qualityCategory = category
+                            if (filter.displayOrder == null) {
+                                filter.displayOrder = filterDisplayOrder++;
+                            }
                         }
                     }
-                }
 
-                // validate profile
-                if (!profile.validate()) {
-                    flash.errors = profile.errors
-                    break;
+                    // validate profile
+                    if (!profile.validate()) {
+                        flash.errors = profile.errors
+                        break;
+                    }
+
+                    profile.userId = request.getParameter('userId') ?: null
+                    // safe whole profile, if any filed fails validation an exception will be thrown
+                    qualityService.createOrUpdateProfile(profile)
+                } catch (ValidationException e) {
+                    flash.errors = e.errors
+                } catch (MaximumRecordNumberReachedException e) {
+                    flash.message = e.message
                 }
+                break
+            }
 
                 // safe whole profile, if any filed fails validation an exception will be thrown
                 qualityService.createOrUpdateProfile(profile)
@@ -323,8 +333,6 @@ class AdminDataQualityController {
             }
             break
         }
-
-        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def fieldDescription(String field, String include, String value) {
