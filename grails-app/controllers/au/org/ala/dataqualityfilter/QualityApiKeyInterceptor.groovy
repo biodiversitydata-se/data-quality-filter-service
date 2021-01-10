@@ -27,7 +27,7 @@ class QualityApiKeyInterceptor {
             } else if (params.profileName) {
                 qp = qualityService.findProfileById(params.profileName)
             } else if (params.qualityProfileId) {
-                qp = qualityService.findProfileById(params.profileName)
+                qp = qualityService.findProfileById(params.qualityProfileId)
             } else if (params.userId) {
                 checkApiKey = true
             } else if (params.qualityCategoryId) {
@@ -47,7 +47,7 @@ class QualityApiKeyInterceptor {
             if (!keyOk) {
                 log.warn("No valid api key for ${controllerName}/${actionName}")
                 response.status = STATUS_UNAUTHORISED
-                response.sendError(STATUS_UNAUTHORISED, "Forbidden")
+                response.sendError(STATUS_UNAUTHORISED, "You need an API key to access private profiles")
                 return false
             }
         }
