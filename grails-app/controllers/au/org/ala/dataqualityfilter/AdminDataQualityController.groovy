@@ -30,7 +30,9 @@ class AdminDataQualityController {
 
     def filters() {
         def qp = QualityProfile.get(params.long('id'))
-        respond QualityCategory.findAllByQualityProfile(qp, [sort: 'id', lazy: false]), model: [ 'qualityFilterStrings' : qualityService.getEnabledFiltersByLabel(qp.shortName), 'errors': flash.errors, 'options': webServicesService.getAllOccurrenceFields(), 'profile': qp ]
+        if (qp) {
+            respond QualityCategory.findAllByQualityProfile(qp, [sort: 'id', lazy: false]), model: ['qualityFilterStrings': qualityService.getEnabledFiltersByLabel(qp.shortName), 'errors': flash.errors, 'options': webServicesService.getAllOccurrenceFields(), 'profile': qp]
+        }
     }
 
     def profiles() {

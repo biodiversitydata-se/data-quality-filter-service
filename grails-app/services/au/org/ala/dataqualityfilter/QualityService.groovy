@@ -59,7 +59,7 @@ class QualityService {
 
     @Transactional(readOnly = true)
     Map<String, String> getEnabledFiltersByLabel(String profileName) {
-        getGroupedEnabledFilters(profileName).collectEntries { [(it.key): it.value*.filter.join(' AND ')] } as Map<String, String>
+        getGroupedEnabledFilters(profileName)?.collectEntries { [(it.key): it.value*.filter.join(' AND ')] } as Map<String, String>
     }
 
     @Transactional(readOnly = true)
@@ -80,7 +80,7 @@ class QualityService {
                 order('displayOrder')
             } as List<String>
         }
-        []
+        null
     }
 
     @Transactional(readOnly = true)
@@ -103,7 +103,7 @@ class QualityService {
                 [(label): filters]
             }
         }
-        [:]
+        null
     }
 
     @Transactional(readOnly = true)
@@ -122,13 +122,13 @@ class QualityService {
                 (it.qualityCategory)
             }
         }
-        [:]
+        null
     }
 
     @Transactional(readOnly = true)
     List<QualityCategory> findAllEnabledCategories(String profileName) {
         QualityProfile qp = getProfile(profileName)
-        QualityCategory.findAllByQualityProfileAndEnabled(qp, true).findAll { category -> category.qualityFilters?.findAll { it.enabled }?.size() > 0 }
+        return qp ? QualityCategory.findAllByQualityProfileAndEnabled(qp, true).findAll { category -> category.qualityFilters?.findAll { it.enabled }?.size() > 0 } : null
     }
 
 
@@ -151,7 +151,7 @@ class QualityService {
     }
 
     String getJoinedQualityFilter(String profileName) {
-        getEnabledQualityFilters(profileName).join(' AND ')
+        getEnabledQualityFilters(profileName)?.join(' AND ')
     }
 
     @Transactional(readOnly = true)
@@ -165,7 +165,7 @@ class QualityService {
         def qp = QualityProfile.get(profileId)
         qp ? qp?.getCategories()?.collectEntries { qc ->
             [(qc.label): getInverseCategoryFilter(qc)]
-        } : [:]
+        } : null
     }
 
     @Transactional(readOnly = true)

@@ -16,8 +16,24 @@ class QualityController {
 
     static responseFormats = ['json']
     static namespace = "v1"
+    static type_profile = 'profile'
+    static type_category = 'category'
+    static id_type_name = 'name'
+    static id_type_id = 'id'
 
     def qualityService
+
+    private processResult(rslt, resourceType, resourceId, resourceValue, contentType = null) {
+        if (rslt == null) {
+            render "Can't find " + resourceType + ' with ' + resourceId + ' [' + resourceValue + ']', contentType: 'text/plain', status: 404
+        } else {
+            if (contentType) {
+                render rslt, contentType: contentType
+            } else {
+                render rslt as JSON
+            }
+        }
+    }
 
     @ApiOperation(
             value = "Get enabled filters, grouped by category label for a given profile name",
@@ -29,10 +45,10 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "Map")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = true, value = "Profile name", dataType = 'string')
     ])
     def getEnabledFiltersByLabel(String profileName) {
-        render qualityService.getEnabledFiltersByLabel(profileName) as JSON
+        processResult(qualityService.getEnabledFiltersByLabel(profileName), type_profile, id_type_name, profileName)
     }
     final class GetEnabledFiltersByLabelResponse extends LinkedHashMap<String, String> {}
 
@@ -46,10 +62,10 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = true, value = "Profile name", dataType = 'string')
     ])
     def getEnabledQualityFilters(String profileName) {
-        render qualityService.getEnabledQualityFilters(profileName) as JSON
+        processResult(qualityService.getEnabledQualityFilters(profileName), type_profile, id_type_name, profileName)
     }
 
     /** This class is unused other than to provides the type information for the OpenAPI definition */
@@ -65,10 +81,10 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = GetGroupedEnabledFiltersResponse) // , responseContainer = "Map"
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = true, value = "Profile name", dataType = 'string')
     ])
     def getGroupedEnabledFilters(String profileName) {
-        render qualityService.getGroupedEnabledFilters(profileName) as JSON
+        processResult(qualityService.getGroupedEnabledFilters(profileName), type_profile, id_type_name, profileName)
     }
 
     @ApiOperation(
@@ -81,10 +97,10 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = QualityCategory, responseContainer = "List")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = true, value = "Profile name", dataType = 'string')
     ])
     def findAllEnabledCategories(String profileName) {
-        render qualityService.findAllEnabledCategories(profileName) as JSON
+        processResult(qualityService.findAllEnabledCategories(profileName), type_profile, id_type_name, profileName)
     }
 
     @ApiOperation(
@@ -138,10 +154,10 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String)
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
+            @ApiImplicitParam(name = "profileName", paramType = "query", required = true, value = "Profile name", dataType = 'string')
     ])
     def getJoinedQualityFilter(String profileName) {
-        render qualityService.getJoinedQualityFilter(profileName), contentType: 'text/plain'
+        processResult(qualityService.getJoinedQualityFilter(profileName), type_profile, id_type_name, profileName,'text/plain')
     }
 
     @ApiOperation(
@@ -157,12 +173,8 @@ class QualityController {
             @ApiImplicitParam(name = "qualityCategoryId", paramType = "query", required = false, value = "Quality Category Id", dataType = 'integer')
     ])
     def getInverseCategoryFilter() {
-        def result = qualityService.getInverseCategoryFilter(params.long('qualityCategoryId'))
-        if (result == null) {
-            render '', contentType: 'text/plain', status: 404
-        } else {
-            render result, contentType: 'text/plain'
-        }
+        def categoryId = params.long('qualityCategoryId')
+        processResult(qualityService.getInverseCategoryFilter(categoryId), type_category, id_type_id, categoryId, 'text/plain')
     }
 
     @ApiOperation(
@@ -175,10 +187,10 @@ class QualityController {
             @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "Map")
     ])
     @ApiImplicitParams([
-            @ApiImplicitParam(name = "qualityProfileId", paramType = "query", required = false, value = "Quality Profile Id", dataType = 'integer')
+            @ApiImplicitParam(name = "qualityProfileId", paramType = "query", required = true, value = "Quality Profile Id", dataType = 'integer')
     ])
     def getAllInverseCategoryFiltersForProfile() {
-        def result = qualityService.getAllInverseCategoryFilters(params.long('qualityProfileId'))
-        render result as JSON
+        def profileId = params.long('qualityProfileId')
+        processResult(qualityService.getAllInverseCategoryFilters(profileId), type_profile, id_type_id, profileId)
     }
 }
