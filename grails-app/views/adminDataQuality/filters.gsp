@@ -248,11 +248,11 @@
                     <g:hiddenField name="qualityProfile" value="${profile.id}" />
                     <div class="form-group">
                         <label for="name">Category name</label>
-                        <g:textField name="name" placeholder="Outliers" class="form-control" />
+                        <g:textField name="name" placeholder="Outliers" class="form-control" required="true" />
                     </div>
                     <div class="form-group">
                         <label for="name">Label</label>
-                        <g:textField name="label" placeholder="short-label-for-ui" class="form-control" />
+                        <g:textField name="label" placeholder="short-label-for-ui" class="form-control" required="true"/>
                     </div>
                     <div class="form-group">
                         <label for="description">Category description</label>

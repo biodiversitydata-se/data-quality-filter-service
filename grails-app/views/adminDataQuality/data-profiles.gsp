@@ -43,11 +43,11 @@
     </g:hasErrors>
 
     <g:if test="${publicProfiles != null}">
-        <g:render template="profilesTableTemplate" model="[label:'Public Data Quality Profiles', type:'public', userId:userId, enableDefault:true, profiles:publicProfiles]"/>
+        <g:render template="profilesTableTemplate" model="[label:'Public Data Quality Profiles', type:'public', userId:userId, enableDefaultButton:true, profiles:publicProfiles]"/>
     </g:if>
 
     <g:if test="${privateProfiles != null}">
-        <g:render template="profilesTableTemplate" model="[label:'Private Data Quality Profiles', type:'private', userId:userId, enableDefault:false, profiles:privateProfiles]"/>
+        <g:render template="profilesTableTemplate" model="[label:'Private Data Quality Profiles', type:'private', userId:userId, enableDefaultButton:false, profiles:privateProfiles]"/>
     </g:if>
 
     <div id="save-profile-modal" class="modal fade" tabindex="-1" role="dialog">
@@ -65,11 +65,11 @@
                         <g:hiddenField name="isPublicProfile"/>
                         <div class="form-group">
                             <label for="name"><alatag:message code="profile.modal.name.label" default="Name" /></label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
                         </div>
                         <div class="form-group">
                             <label for="shortName"><alatag:message code="profile.modal.shortName.label" default="Short name" /></label>
-                            <input type="text" class="form-control" id="shortName" name="shortName" placeholder="short-name">
+                            <input type="text" class="form-control" id="shortName" name="shortName" placeholder="short-name" required>
                             <p class="help-block"><alatag:message code="profile.modal.shortName.help" default="Label used for selecting this profile in URLs and the like.  A single lower case word is preferred." /></p>
                         </div>
                         <div class="form-group">

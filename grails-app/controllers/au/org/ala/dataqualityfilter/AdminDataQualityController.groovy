@@ -251,11 +251,11 @@ class AdminDataQualityController {
     }
 
     def exportProfile() {
-        QualityProfile profile = QualityProfile.get(params.long('id'))
+        QualityProfile profile = QualityProfile.get(params.long('profileId'))
 
-        if (processAllowed(profile)) {
+        if (profile && processAllowed(profile)) {
             if (profile) {
-                String fileName = 'profile_' + params.long('id')
+                String fileName = 'profile_' + profile.shortName
                 response.setHeader('Content-Disposition', 'attachment; filename=' + fileName + '.json')
                 response.setContentType("text");
 
