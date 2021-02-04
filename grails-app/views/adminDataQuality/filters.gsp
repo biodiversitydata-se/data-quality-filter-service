@@ -590,9 +590,9 @@
                 $desc.trigger("input");
             }).fail(function( jqXHR, textStatus, error ) {
                 if (jqXHR.status === 404) {
-                    alert( "No description found" );
+                    alert( "No description found for field:" + field);
                 } else {
-                    alert( "An error occured");
+                    alert( "An error occurred");
                 }
             });
         }
