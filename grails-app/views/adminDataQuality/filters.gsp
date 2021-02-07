@@ -13,6 +13,10 @@
         padding-left: 5px;
         padding-right: 5px;
     }
+    .removeSelectPadding {
+        padding-left: 1px;
+        padding-right: 1px;
+    }
     </style>
 </head>
 <body>
@@ -146,11 +150,11 @@
                                                     <g:textArea class="form-control filterDescription" name="description" id="${filter.id + '-description'}" value="${filter.description}" data-orig="${filter.description}" style="width: 100%" oninput="resizeTextArea(this)"/>
                                                 </div>
                                                 <div class="col-md-3 smallpadding" style="display: flex;">
-                                                    <select class="form-control exclude" style="width: 30%">
+                                                    <select class="form-control exclude removeSelectPadding" style="width: 30%">
                                                         <option value="Include">Include</option>
                                                         <option value="Exclude">Exclude</option>
                                                     </select>
-                                                    <g:select class="form-control filterKey" name="filterKey" id="${filter.id + '-key'}" from="${options}" value="abcd_type_status" style="width: 70%"/>
+                                                    <g:select class="form-control filterKey removeSelectPadding" name="filterKey" id="${filter.id + '-key'}" from="${options}" value="abcd_type_status" style="width: 70%"/>
                                                 </div>
                                                 <div class="col-md-2 smallpadding">
                                                     <g:textField class="form-control filterValue" name="filterValue" id="${filter.id + '-value'}" style="width: 100%"/>
@@ -202,11 +206,11 @@
                                                     <g:textArea class="form-control filterDescription" name="description" id="${category.id + '-description'}" placeholder="Filter Description" style="width: 100%" oninput="resizeTextArea(this)"/>
                                                 </div>
                                                 <div class="col-md-3 smallpadding" style="display: flex">
-                                                    <select class="form-control exclude" from="" style="width: 30%">
+                                                    <select class="form-control exclude removeSelectPadding" from="" style="width: 30%">
                                                         <option value="Include" selected="selected">Include</option>
                                                         <option value="Exclude">Exclude</option>
                                                     </select>
-                                                    <g:select class="form-control filterKey" name="filterKey" id="${category.id + '-key'}" style="width: 70%" from="${options}"/>
+                                                    <g:select class="form-control filterKey removeSelectPadding" name="filterKey" id="${category.id + '-key'}" style="width: 70%" from="${options}"/>
                                                 </div>
                                                 <div class="col-md-2 smallpadding">
                                                     <g:textField class="form-control filterValue" name="filterValue" id="${category.id + '-value'}" placeholder="Filter value" style="width: 100%"/>
