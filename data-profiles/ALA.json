@@ -1,0 +1,242 @@
+{
+  "name": "ALA General",
+  "shortName": "ALA",
+  "description": "The default ALA profile filters out records based on the filter groups outlined below.  This is a moderately restricted set of data.",
+  "contactName": "Miles Nicholls",
+  "contactEmail": "dataquality@ala.org.au",
+  "categories": 
+  [
+    {
+      "enabled": true,
+      "name": "Exclude spatially suspect records",
+      "label": "spatially-suspect",
+      "description": "Exclude records with a spatially suspect (geospatial kosher) flag.",
+      "displayOrder": 1,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where spatial validity is \"false\"",
+          "filter": "-geospatial_kosher:\"false\"",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records based on scientific name quality",
+      "label": "scientific-name",
+      "description": "Exclude records with scientific name related quality assertions",
+      "displayOrder": 2,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion that the scientific name provided does not match any of the names lists used by the ALA.  For a full explanation of the ALA name matching process see https://github.com/AtlasOfLivingAustralia/ala-name-matching",
+          "filter": "-assertions:nameNotRecognised",
+          "displayOrder": 1
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion that the scientific name provided is not structured as a valid scientific name. Also catches rank values or values such as \"UNKNOWN\"",
+          "filter": "-assertions:invalidScientificName",
+          "displayOrder": 2
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion that the name and classification supplied can't be used to choose between 2 homonyms",
+          "filter": "-assertions:homonymIssue",
+          "displayOrder": 3
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion that kingdom provided doesn't match a known kingdom e.g. Animalia, Plantae",
+          "filter": "-assertions:unknownKingdom",
+          "displayOrder": 4
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion that the scientific name provided in the record does not match the expected taxonomic scope of the resource e.g. Mammal records attributed to bird watch group",
+          "filter": "-assertions:resourceTaxonomicScopeMismatch",
+          "displayOrder": 5
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records with additional spatial quality issues",
+      "label": "location",
+      "description": "Exclude records with location related data quality assertions",
+      "displayOrder": 3,
+      "qualityFilters": 
+      [
+        {
+          "enabled": false,
+          "description": "Exclude all records with an assertion of A marine species detected in a terrestrial environment or a terrestrial species detected in a marine environment.",
+          "filter": "-assertions:\"habitatMismatch\"",
+          "displayOrder": 1
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion of the occurence is cultivated or escaped from captivity",
+          "filter": "-assertions:\"occCultivatedEscapee\"",
+          "displayOrder": 2
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion of  latitude value provided is zero",
+          "filter": "-assertions:\"zeroLatitude\"",
+          "displayOrder": 3
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion of longitude value provided is zero",
+          "filter": "-assertions:\"zeroLongitude\"",
+          "displayOrder": 4
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion of  latitude and longitude have been transposed",
+          "filter": "-assertions:\"invertedCoordinates\"",
+          "displayOrder": 5
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion of coordinates are the exact centre of the state or territory",
+          "filter": "-assertions:\"coordinatesCentreOfStateProvince\"",
+          "displayOrder": 6
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with an assertion of  coordinates are the exact centre of the country",
+          "filter": "-assertions:\"coordinatesCentreOfCountry\"",
+          "displayOrder": 7
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude duplicate records",
+      "label": "duplicates",
+      "description": "Exclude duplicate records",
+      "displayOrder": 4,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where duplicate status is \"duplicate\"",
+          "filter": "-duplicate_status:\"D\"",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records based on location uncertainty",
+      "label": "location-uncertainty",
+      "description": "Exclude records with high uncertainty",
+      "displayOrder": 5,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where coordinate uncertainty (in metres) is greater than 10km",
+          "filter": "-coordinate_uncertainty:[10001 TO *]",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records with unresolved user annotations",
+      "label": "user-assertions",
+      "description": "Exclude records with open user assertions",
+      "displayOrder": 6,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records with unresolved user  assertions",
+          "filter": "-user_assertions:50001",
+          "displayOrder": 1
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records with unconfirmed  user assertions",
+          "filter": "-user_assertions:50005",
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records that are environmental outliers",
+      "label": "outliers",
+      "description": "Exclude records that are an outlier (not within the expected range) against 3 or more environmental layers according to a reverse jacknife test",
+      "displayOrder": 7,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where outlier layer count is 3 or more",
+          "filter": "-outlier_layer_count:[3 TO *]",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records based on record type",
+      "label": "record-type",
+      "description": "Exclude environmental DNA and fossil specimen records",
+      "displayOrder": 8,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where Record type is \"Fossil specimen\"",
+          "filter": "-basis_of_record:\"FossilSpecimen\"",
+          "displayOrder": 1
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where Record type is \"EnvironmentalDNA\"",
+          "filter": "-basis_of_record:\"EnvironmentalDNA\"",
+          "displayOrder": 2
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude absence records",
+      "label": "occurrence-status",
+      "description": "Exclude absence records",
+      "displayOrder": 9,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where Presence/Absence is \"absent\"",
+          "filter": "-occurrence_status:absent",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records pre 1700",
+      "label": "dates-post-1700",
+      "description": "Exclude records with event date pre 1700",
+      "displayOrder": 10,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where year is prior to 1700",
+          "filter": "-year:[* TO 1700]",
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}
