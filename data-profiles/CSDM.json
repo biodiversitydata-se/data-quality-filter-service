@@ -10,14 +10,14 @@
       "enabled": true,
       "name": "Exclude spatially suspect records",
       "label": "spatially-valid",
-      "description": "Exclude records with spatially suspect (geospatial_kosher) flag",
+      "description": "Exclude records with spatially suspect (spatiallyValid) flag",
       "displayOrder": 1,
       "qualityFilters": 
       [
         {
           "enabled": true,
           "description": "Include only records where Spatial validity is \"true\"",
-          "filter": "geospatial_kosher:\"true\"",
+          "filter": "spatiallyValid:\"true\"",
           "displayOrder": 1
         }
       ]
@@ -33,7 +33,7 @@
         {
           "enabled": true,
           "description": "Exclude potential duplicate records",
-          "filter": "-duplicate_record:[* TO *]",
+          "filter": "-isDuplicateOf:*",
           "displayOrder": 1
         }
       ]
@@ -49,7 +49,7 @@
         {
           "enabled": true,
           "description": "Exclude all records that are an outlier against any environmental layer",
-          "filter": "-outlier_layer_count:[* TO *]",
+          "filter": "-outlierLayerCount:[1 TO *]",
           "displayOrder": 1
         }
       ]
