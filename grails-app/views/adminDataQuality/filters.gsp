@@ -206,7 +206,7 @@
                                                         <option value="Include" selected="selected">Include</option>
                                                         <option value="Exclude">Exclude</option>
                                                     </select>
-                                                    <g:select class="form-control filterKey" name="filterKey" id="${category.id + '-key'}" style="width: 70%" from="${options}"/>
+                                                    <g:select class="form-control filterKey" name="filterKey" id="${category.id + '-key'}" style="width: 70%" from="${options}" noSelection="['':'']"/>
                                                 </div>
                                                 <div class="col-md-2 smallpadding">
                                                     <g:textField class="form-control filterValue" name="filterValue" id="${category.id + '-value'}" placeholder="Filter value" style="width: 100%"/>
@@ -548,7 +548,7 @@
         var exclude = $('.exclude', group).val();
         var filterKey = $('.filterKey', group).val();
         var filterVal = $('.filterValue', group).val();
-        var newFqVal = (exclude == 'Include' ? '' : '-') + filterKey + ':' + filterVal;
+        var newFqVal = (exclude == 'Include' ? '' : '-') + filterKey + (filterKey ? ':' : '') + filterVal;
         $('.filter', group).val(newFqVal);
     }
 
