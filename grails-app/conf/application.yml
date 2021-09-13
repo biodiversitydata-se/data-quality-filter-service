@@ -164,9 +164,6 @@ security:
         uriFilterPattern: '/data-profiles,/filters/*,/download.*'
         authenticateOnlyIfLoggedInPattern: '/occurrences/(?!.+userAssertions|facet.+).+,/explore/your-area,/query,/proxy/download/.*'
         uriExclusionFilterPattern: '/occurrences/shapeUpload,/images.*,/css.*,/js.*,.*json,/help/.*'
-    apikey:
-        check:
-            serviceUrl: "https://auth.ala.org.au/apikey/ws/check?apikey="
 
 server:
     contextPath: '/data-quality'

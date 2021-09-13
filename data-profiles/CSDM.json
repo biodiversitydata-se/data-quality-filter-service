@@ -1,0 +1,74 @@
+{
+  "name": "Species Distribution Modelling (CSDM)",
+  "shortName": "CSDM",
+  "description": "Base filters for the Collaborative Species Distribution Modelling program",
+  "contactName": "Miles Nicholls",
+  "contactEmail": "dataquality@ala.org.au",
+  "categories": 
+  [
+    {
+      "enabled": true,
+      "name": "Exclude spatially suspect records",
+      "label": "spatially-valid",
+      "description": "Exclude records with spatially suspect (geospatial_kosher) flag",
+      "displayOrder": 1,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Include only records where Spatial validity is \"true\"",
+          "filter": "geospatial_kosher:\"true\"",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude duplicate records",
+      "label": "duplicates",
+      "description": "Exclude duplicates",
+      "displayOrder": 2,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude potential duplicate records",
+          "filter": "-duplicate_record:[* TO *]",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records that are environmental outliers",
+      "label": "environmental-outliers",
+      "description": "Exclude environmental outliers",
+      "displayOrder": 3,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records that are an outlier against any environmental layer",
+          "filter": "-outlier_layer_count:[* TO *]",
+          "displayOrder": 1
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records pre 1970",
+      "label": "recent-records",
+      "description": "Include only records from 1970 to 2099",
+      "displayOrder": 4,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Include only records where Year is 1970 to 2099",
+          "filter": "year:[1970 TO *]",
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

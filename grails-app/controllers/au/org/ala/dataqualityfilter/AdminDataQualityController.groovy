@@ -14,7 +14,6 @@
  */
 package au.org.ala.dataqualityfilter
 
-import au.org.ala.web.CASRoles
 import com.google.gson.Gson
 import grails.converters.JSON
 import grails.gorm.transactions.Transactional
@@ -26,13 +25,10 @@ class AdminDataQualityController {
     public static final String DATA_PROFILES_ACTION_NAME = 'data-profiles'
     def qualityService
     def webServicesService
-    def authService
 
     def filters() {
         def qp = QualityProfile.get(params.long('id'))
-        if (qp) {
-            respond QualityCategory.findAllByQualityProfile(qp, [sort: 'id', lazy: false]), model: ['qualityFilterStrings': qualityService.getEnabledFiltersByLabel(qp.shortName), 'errors': flash.errors, 'options': webServicesService.getAllOccurrenceFields(), 'profile': qp]
-        }
+        respond QualityCategory.findAllByQualityProfile(qp, [sort: 'id', lazy: false]), model: [ 'qualityFilterStrings' : qualityService.getEnabledFiltersByLabel(qp.shortName), 'errors': flash.errors, 'options': webServicesService.getAllOccurrenceFields(), 'profile': qp ]
     }
 
     def profiles() {
@@ -40,32 +36,16 @@ class AdminDataQualityController {
     }
 
     def 'data-profiles'() {
-        def model = [:]
-        // if admin, add public profiles
-        if (request.isUserInRole(CASRoles.ROLE_ADMIN)) {
-            model.put('publicProfiles', QualityProfile.findAll(sort:"id") {
-                isPublic == true
-            })
-        }
-        // always add private profiles
-        model.put('privateProfiles', QualityProfile.findAll(sort:"id") {
-            userId == authService?.getUserId()
-        })
-        model.put('userId', authService?.getUserId())
-        model.put('errors', flash.errors)
-        model
+        respond QualityProfile.list(sort: 'id'), model: ['errors': flash.errors]
     }
 
     def saveProfile(QualityProfile qualityProfile) {
-        preprocessProfile(qualityProfile)
         def invalidReq = false
         withForm {
             try {
                 qualityService.createOrUpdateProfile(qualityProfile)
             } catch (ValidationException e) {
                 flash.errors = e.errors
-            } catch (MaximumRecordNumberReachedException e) {
-                flash.message = e.message
             }
         }.invalidToken {
             invalidReq = true
@@ -78,7 +58,7 @@ class AdminDataQualityController {
             }
             json {
                 if (flash.errors || invalidReq) {
-                    render {} as JSON
+                    render { } as JSON
                 } else {
                     def rslt = [:]
                     rslt.profile = QualityProfile.findById(qualityProfile.id)
@@ -90,40 +70,34 @@ class AdminDataQualityController {
     }
 
     def enableQualityProfile() {
-        def qp = QualityProfile.get(params.long('id'))
-        if (processAllowed(qp)) {
-            withForm {
-                qp.enabled = params.boolean('enabled', false)
-                qp.save(flush: true)
-            }.invalidToken {
-                // bad request
-                log.debug("ignore duplicate enable category request")
-            }
-            redirect(action: DATA_PROFILES_ACTION_NAME)
+        withForm {
+            def qp = QualityProfile.get(params.long('id'))
+            qp.enabled = params.boolean('enabled', false)
+            qp.save(flush: true)
+        }.invalidToken {
+            // bad request
+            log.debug("ignore duplicate enable category request")
         }
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def setDefaultProfile() {
-        if (processAllowed(QualityProfile.get(params.long('id')))) {
-            withForm {
-                qualityService.setDefaultProfile(params.long('id'))
-            }.invalidToken {
-                log.debug('set default profile invalid token')
-            }
-            redirect(action: DATA_PROFILES_ACTION_NAME)
+        withForm {
+            qualityService.setDefaultProfile(params.long('id'))
+        }.invalidToken {
+            log.debug('set default profile invalid token')
         }
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def deleteQualityProfile(QualityProfile qualityProfile) {
-        if (processAllowed(qualityProfile)) {
-            withForm {
-                qualityService.deleteProfile(qualityProfile)
-            }.invalidToken {
-                // bad request
-                log.debug("ignore duplicate delete profile request. name: {}, shortname: {}", qualityProfile.name, qualityProfile.shortName)
-            }
-            redirect(action: DATA_PROFILES_ACTION_NAME)
+        withForm {
+            qualityService.deleteProfile(qualityProfile)
+        }.invalidToken {
+            // bad request
+            log.debug("ignore duplicate delete profile request. name: {}, shortname: {}", qualityProfile.name, qualityProfile.shortName)
         }
+        redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
     def saveQualityCategory(QualityCategory qualityCategory) {
@@ -181,7 +155,7 @@ class AdminDataQualityController {
     def saveQualityFilter(QualityFilter qualityFilter) {
         def profileid = qualityFilter.qualityCategory.qualityProfile.id
 
-        withFormat {
+        withFormat{
             html {
                 withForm {
                     try {
@@ -251,18 +225,16 @@ class AdminDataQualityController {
     }
 
     def exportProfile() {
-        QualityProfile profile = QualityProfile.get(params.long('profileId'))
+        QualityProfile profile = QualityProfile.get(params.long('id'))
 
-        if (profile && processAllowed(profile)) {
-            if (profile) {
-                String fileName = 'profile_' + profile.shortName
-                response.setHeader('Content-Disposition', 'attachment; filename=' + fileName + '.json')
-                response.setContentType("text");
+        if (profile) {
+            String fileName = 'profile_' + params.long('id')
+            response.setHeader('Content-Disposition', 'attachment; filename=' + fileName + '.json')
+            response.setContentType("text");
 
-                JSON.use('exportProfile', {
-                    render profile as JSON
-                })
-            }
+            JSON.use('exportProfile', {
+                render profile as JSON
+            })
         }
     }
 
@@ -284,8 +256,6 @@ class AdminDataQualityController {
                 flash.message = e.getLocalizedMessage()
                 break
             }
-
-            preprocessProfile(profile)
 
             try {
                 // set profile display order, there may already have existing profiles, so new display order = current max + 1
@@ -320,11 +290,10 @@ class AdminDataQualityController {
                 qualityService.createOrUpdateProfile(profile)
             } catch (ValidationException e) {
                 flash.errors = e.errors
-            } catch (MaximumRecordNumberReachedException e) {
-                flash.message = e.message
             }
             break
         }
+
         redirect(action: DATA_PROFILES_ACTION_NAME)
     }
 
@@ -337,29 +306,5 @@ class AdminDataQualityController {
         } else {
             render status: 404
         }
-    }
-
-    private boolean processAllowed(qualityProfile) {
-        while (true) {
-            // if processing public profile, you need to be an admin
-            if (!qualityProfile.userId) {
-                if (!request.isUserInRole(CASRoles.ROLE_ADMIN)) {
-                    flash.message = 'you need to be an administrator to edit/export public profiles'
-                    break;
-                }
-            } else { // if processing private profile, you need to be the owner of the profile
-                if (qualityProfile.userId != authService?.getUserId()) {
-                    flash.message = 'you can only edit/export your own profiles'
-                    break;
-                }
-            }
-
-            return true
-        }
-        redirect(controller: "adminDataQuality", action: "data-profiles")
-    }
-
-    private void preprocessProfile(qualityProfile) {
-        qualityProfile.userId = params.isPublicProfile == 'true' ? null : authService?.getUserId()
     }
 }

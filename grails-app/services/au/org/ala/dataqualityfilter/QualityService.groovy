@@ -53,105 +53,96 @@ class QualityService {
         qualityCategory.delete()
     }
 
-    QualityProfile getProfile(String profileName) {
-        return QualityProfile.findByShortName(profileName)    
-    }
-
     @Transactional(readOnly = true)
     Map<String, String> getEnabledFiltersByLabel(String profileName) {
-        getGroupedEnabledFilters(profileName)?.collectEntries { [(it.key): it.value*.filter.join(' AND ')] } as Map<String, String>
+        getGroupedEnabledFilters(profileName).collectEntries { [(it.key): it.value*.filter.join(' AND ')] }
     }
 
     @Transactional(readOnly = true)
     List<String> getEnabledQualityFilters(String profileName) {
-        QualityProfile qp = getProfile(profileName)
-        if (qp) {
-            return QualityFilter.withCriteria {
+        QualityProfile qp = activeProfile(profileName)
+        QualityFilter.withCriteria {
+            eq('enabled', true)
+            qualityCategory {
+                qualityProfile {
+                    eq('id', qp.id)
+                }
                 eq('enabled', true)
-                qualityCategory {
-                    qualityProfile {
-                        eq('id', qp.id)
-                    }
-                    eq('enabled', true)
-                }
-                projections {
-                    property('filter')
-                }
-                order('displayOrder')
-            } as List<String>
+            }
+            projections {
+                property('filter')
+            }
+            order('displayOrder')
         }
-        null
     }
 
     @Transactional(readOnly = true)
     Map<String, List<QualityFilter>> getGroupedEnabledFilters(String profileName) {
-        QualityProfile qp = getProfile(profileName)
+        QualityProfile qp = activeProfile(profileName)
 
-        if (qp) {
-            return QualityFilter.withCriteria {
-                eq('enabled', true)
-                qualityCategory {
-                    qualityProfile {
-                        eq('id', qp.id)
-                    }
-                    eq('enabled', true)
+        QualityFilter.withCriteria {
+            eq('enabled', true)
+            qualityCategory {
+                qualityProfile {
+                    eq('id', qp.id)
                 }
-                order('displayOrder')
-            }.groupBy { QualityFilter qualityFilter ->
-                qualityFilter.qualityCategory.label
-            }.collectEntries { label, filters ->
-                [(label): filters]
+                eq('enabled', true)
             }
+            order('displayOrder')
+        }.groupBy { QualityFilter qualityFilter ->
+            qualityFilter.qualityCategory.label
+        }.collectEntries { label, filters ->
+            [ (label): filters ]
         }
-        null
     }
 
     @Transactional(readOnly = true)
     Map<QualityCategory, List<QualityFilter>> getEnabledCategoriesAndFilters(String profileName) {
-        QualityProfile qp = getProfile(profileName)
-        if (qp) {
-            return QualityFilter.withCriteria {
-                eq('enabled', true)
-                qualityCategory {
-                    qualityProfile {
-                        eq('id', qp.id)
-                    }
-                    eq('enabled', true)
+        QualityProfile qp = activeProfile(profileName)
+        QualityFilter.withCriteria {
+            eq('enabled', true)
+            qualityCategory {
+                qualityProfile {
+                    eq('id', qp.id)
                 }
-            }.groupBy {
-                (it.qualityCategory)
+                eq('enabled', true)
             }
+        }.groupBy {
+            (it.qualityCategory)
         }
-        null
     }
 
     @Transactional(readOnly = true)
     List<QualityCategory> findAllEnabledCategories(String profileName) {
-        QualityProfile qp = getProfile(profileName)
-        return qp ? QualityCategory.findAllByQualityProfileAndEnabled(qp, true).findAll { category -> category.qualityFilters?.findAll { it.enabled }?.size() > 0 } : null
+        QualityProfile qp = activeProfile(profileName)
+        QualityCategory.findAllByQualityProfileAndEnabled(qp, true).findAll { category -> category.qualityFilters?.findAll { it.enabled }?.size() > 0 }
     }
 
-
     /**
-     * Get the default profile. If userId provided, return the default profile for the user. Otherwise return the default public profile.
-     * @param userId
-     * @return
+     * Get the profile for a given profile short name or return the default profile if the
+     * profile name doesn't exist.
+     * @param profileName The profile short name to lookup
+     * @return The profile that matches the name or the default profile
      */
-
-    QualityProfile getDefaultProfile(String userId = null) {
-        if (userId) {
-            // if userId specified, return his profile if enabled, one person can have 1 profile now
-            def qp = QualityProfile.findByUserId(userId)
-            if (qp?.enabled) {
-                return qp
+    QualityProfile activeProfile(String profileName) {
+        QualityProfile qp
+        if (profileName) {
+            qp = QualityProfile.findByShortName(profileName)
+            if (!qp) {
+                qp = getDefaultProfile()
             }
+        } else {
+            qp = getDefaultProfile()
         }
+        return qp
+    }
 
+    QualityProfile getDefaultProfile() {
         QualityProfile.findByIsDefault(true)
     }
 
     String getJoinedQualityFilter(String profileName) {
-        getEnabledQualityFilters(profileName)?.join(' AND ')
+        getEnabledQualityFilters(profileName).join(' AND ')
     }
 
     @Transactional(readOnly = true)
@@ -165,7 +156,7 @@ class QualityService {
         def qp = QualityProfile.get(profileId)
         qp ? qp?.getCategories()?.collectEntries { qc ->
             [(qc.label): getInverseCategoryFilter(qc)]
-        } : null
+        } : [:]
     }
 
     @Transactional(readOnly = true)
@@ -245,14 +236,6 @@ class QualityService {
 
     @Transactional
     void createOrUpdateProfile(QualityProfile qualityProfile) {
-        // if you are creating a private profile
-        if (!qualityProfile.id && qualityProfile.userId) {
-            List<QualityCategory> existingProfiles = QualityProfile.findAllByUserId(qualityProfile.userId) as List<QualityCategory>
-            if (existingProfiles.size() >= 1) {
-                throw new MaximumRecordNumberReachedException('You can only have 1 private profile')
-            }
-        }
-
         if (qualityProfile.displayOrder == null) {
             qualityProfile.displayOrder = (QualityProfile.selectMaxDisplayOrder().get() ?: 0) + 1
         }
@@ -381,15 +364,11 @@ class QualityService {
         resp
     }
 
-    /**
-     * Get the profile by id or a given short name
-     * @param profileId The profile id or short name to lookup
-     * @return The profile that matches or null if no matching found
-     */
-
     QualityProfile findProfileById(Serializable profileId) {
         def qp
-        if (profileId instanceof Long || profileId instanceof Integer) {
+        if (profileId == 'default') {
+            qp = defaultProfile
+        } else if (profileId instanceof Long || profileId instanceof Integer) {
             qp = QualityProfile.get(profileId)
         } else if (profileId instanceof String && profileId.isLong()) {
             qp = QualityProfile.get(profileId.toLong())
@@ -432,14 +411,6 @@ class QualityService {
                 ilike('shortName', map.shortName)
             }
 
-            if (map.containsKey('userId')) {
-                or {
-                    eq('userId', map.userId)
-                    isNull('userId')
-                }
-            } else {
-                isNull('userId')
-            }
-        } as List<QualityProfile>
+        }
     }
 }

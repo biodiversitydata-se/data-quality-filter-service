@@ -1,0 +1,126 @@
+{
+  "name": "Data licensed for all uses",
+  "shortName": "re-usable",
+  "description": "Data licensed for re-use, including commercial uses. This profile only filters on license, no \"quality\" filters are applied.",
+  "contactName": "Miles Nicholls",
+  "contactEmail": "dataquality@ala.org.au",
+  "categories": 
+  [
+    {
+      "enabled": true,
+      "name": "Exclude records without a fully open license",
+      "label": "open-license",
+      "description": "Open licensed data, excludes records or data sources where the license is unclear, unknown, has additional requirements beyond attribution or is non-commercial use restricted",
+      "displayOrder": 1,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC\"",
+          "filter": "-license:\"CC-BY-NC\"",
+          "displayOrder": 1
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC 4.0 (Int)\"",
+          "filter": "-license:\"CC-BY-NC 4.0 (Int)\"",
+          "displayOrder": 2
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC 3.0 (Aus)\"",
+          "filter": "-license:\"CC-BY-NC 3.0 (Aus)\"",
+          "displayOrder": 3
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"Creative Commons - license at record level\"",
+          "filter": "-license:\"Creative Commons - license at record level\"",
+          "displayOrder": 4
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC-SA 4.0 (Int)\"",
+          "filter": "-license:\"CC-BY-NC-SA 4.0 (Int)\"",
+          "displayOrder": 5
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC-ND 4.0 (Int)\"",
+          "filter": "-license:\"CC-BY-NC-ND 4.0 (Int)\"",
+          "displayOrder": 6
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"other\"",
+          "filter": "-license:\"other\"",
+          "displayOrder": 7
+        },
+        {
+          "enabled": true,
+          "description": "Include only records where License is \"CC-BY-SA 4.0 (Int)\"",
+          "filter": "-license:\"CC-BY-SA 4.0 (Int)\"",
+          "displayOrder": 8
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC 3.0 (Au)\"",
+          "filter": "-license:\"CC-BY-NC 3.0 (Au)\"",
+          "displayOrder": 9
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC BY-NC-Int\"",
+          "filter": "-license:\"CC BY-NC-Int\"",
+          "displayOrder": 10
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC-Int\"",
+          "filter": "-license:\"CC-BY-NC-Int\"",
+          "displayOrder": 11
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"Custom\"",
+          "filter": "-license:\"Custom\"",
+          "displayOrder": 12
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC 2.5 (Int)\"",
+          "filter": "-license:\"CC-BY-NC 2.5 (Int)\"",
+          "displayOrder": 13
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-NC-Aus\"",
+          "filter": "-license:\"CC-BY-NC-Aus\"",
+          "displayOrder": 14
+        },
+        {
+          "enabled": true,
+          "description": "Exclude all records where License is \"CC-BY-ND 4.0 (Int)\"",
+          "filter": "-license:\"CC-BY-ND 4.0 (Int)\"",
+          "displayOrder": 15
+        }
+      ]
+    },
+    {
+      "enabled": true,
+      "name": "Exclude records with no license information",
+      "label": "license",
+      "description": "Include only records with license information",
+      "displayOrder": 2,
+      "qualityFilters": 
+      [
+        {
+          "enabled": true,
+          "description": "Include only records with a license value",
+          "filter": "license:[* TO *]",
+          "displayOrder": 1
+        }
+      ]
+    }
+  ]
+}

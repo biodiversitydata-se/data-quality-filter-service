@@ -41,75 +41,116 @@
             </ul>
         </div>
     </g:hasErrors>
+    <div class="row">
+        <div class="col-md-12" style="margin-bottom: 5px">
+            <h1>Data Quality Profiles</h1>
+            <button data-toggle="modal" data-target="#save-profile-modal" class="btn btn-primary"><alatag:message code="add.profile.button" default="Add Profile" /></button>
+            <button data-toggle="modal" data-target="#import-profile-modal" class="btn btn-primary"><alatag:message code="dq.admin.import.profile.button" default="Import a profile"/></button>
+        </div>
+        <div class="col-md-12">
+            <table id="profiletable" class="table table-bordered table-hover table-striped table-responsive">
+                <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>short-name</th>
+                    <th>enabled</th>
+                    <th></th>
+                </tr>
+                </thead>
+                <tbody>
+                <g:if test="${qualityProfileInstanceList != null && qualityProfileInstanceList.size() > 0}">
+                    <g:each in="${qualityProfileInstanceList.sort{it.displayOrder}}" var="profile">
+                        <tr id="profile-${profile.id}" data-curdisplayorder="${profile.displayOrder}">
+                            <td style="vertical-align: middle"><img src="${assetPath(src: 'menu.png')}" class="dragHandle" data-toggle="tooltip" title="drag/drop to re-order profiles"></img>&nbsp;&nbsp;${profile.id}</td>
+                            <td style="vertical-align: middle"><g:link action="filters" id="${profile.id}">${profile.name}</g:link></td>
+                            <td style="vertical-align: middle">${profile.shortName}</td>
+                            <td style="vertical-align: middle">
+                                <g:form action="enableQualityProfile" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}" />
+                                    <g:checkBox name="enabled" value="${profile.enabled}" disabled="${profile.isDefault}"  />
+                                </g:form>
+                            </td>
+                            <td>
+                                <button data-id="${profile.id}" data-name="${profile.name}" data-short-name="${profile.shortName}" data-description="${profile.description}" data-contact-name="${profile.contactName}" data-contact-email="${profile.contactEmail}" data-is-default="${profile.isDefault}" data-enabled="${profile.enabled}" class="btn btn-default btn-edit-profile"><i class="fa fa-edit"></i></button>
+                                <g:form action="setDefaultProfile" class="form-inline" style="display:inline;" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}" />
+                                    <button type="submit" class="btn btn-${profile.isDefault ? 'primary' : 'default'} ${profile.isDefault ? ' active' : ''}" aria-pressed="${profile.isDefault}">Default</button>
+                                </g:form>
+                                <g:form action="deleteQualityProfile" data-confirmation="${profile.categories.size() > 0}" class="form-inline" style="display:inline;" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}" />
+                                    <button type="submit" class="btn btn-danger" ${profile.isDefault ? 'disabled' : ''}><i class="fa fa-trash"></i></button>
+                                </g:form>
+                                <g:link action="exportProfile" id="${profile.id}"><button class="btn btn-default"><alatag:message code="dq.admin.export.profile.button" default="Export profile"/></button></g:link>
+                                <g:form class="updateProfileDisplayOrder" useToken="true">
+                                    <g:hiddenField name="id" value="${profile.id}"></g:hiddenField>
+                                </g:form>
+                            </td>
+                        </tr>
+                    </g:each>
+                </g:if>
+                </tbody>
+            </table>
+        </div>
+        <div id="save-profile-modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><alatag:message code="profile.modal.title" default="New Profile" /></h4>
+                    </div>
+                    <div class="modal-body">
+                        <g:form name="save-profile-form" action="saveProfile" useToken="true">
+                            <g:hiddenField name="id" value="" />
+                            <g:hiddenField name="enabled" value="false" />
+                            <g:hiddenField name="isDefault" value="false" />
+                            <div class="form-group">
+                                <label for="name"><alatag:message code="profile.modal.name.label" default="Name" /></label>
+                                <input type="text" class="form-control" id="name" name="name" placeholder="Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="shortName"><alatag:message code="profile.modal.shortName.label" default="Short name" /></label>
+                                <input type="text" class="form-control" id="shortName" name="shortName" placeholder="short-name">
+                                <p class="help-block"><alatag:message code="profile.modal.shortName.help" default="Label used for selecting this profile in URLs and the like.  A single lower case word is preferred." /></p>
+                            </div>
+                            <div class="form-group">
+                                <label for="description"><alatag:message code="profile.modal.description.label" default="Description" /></label>
+                                <input type="text" class="form-control" id="description" name="description" placeholder="description...">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactName"><alatag:message code="profile.modal.contactName.label" default="Contact Name" /></label>
+                                <input type="text" class="form-control" id="contactName" name="contactName" placeholder="Contact Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmail"><alatag:message code="profile.modal.contactName.label" default="Contact Email (Optional)" /></label>
+                                <input type="email" class="form-control" id="contactEmail" name="contactEmail" placeholder="contact.email@example.org">
+                            </div>
+                        </g:form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" form="save-profile-form" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
-    <g:if test="${publicProfiles != null}">
-        <g:render template="profilesTableTemplate" model="[label:'Public Data Quality Profiles', type:'public', userId:userId, enableDefaultButton:true, profiles:publicProfiles]"/>
-    </g:if>
-
-    <g:if test="${privateProfiles != null}">
-        <g:render template="profilesTableTemplate" model="[label:'Private Data Quality Profiles', type:'private', userId:userId, enableDefaultButton:false, profiles:privateProfiles]"/>
-    </g:if>
-
-    <div id="save-profile-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><alatag:message code="profile.modal.title" default="New Profile" /></h4>
-                </div>
-                <div class="modal-body">
-                    <g:form name="save-profile-form" action="saveProfile" useToken="true">
-                        <g:hiddenField name="id" value="" />
-                        <g:hiddenField name="enabled" value="false" />
-                        <g:hiddenField name="isDefault" value="false" />
-                        <g:hiddenField name="isPublicProfile"/>
-                        <div class="form-group">
-                            <label for="name"><alatag:message code="profile.modal.name.label" default="Name" /></label>
-                            <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="shortName"><alatag:message code="profile.modal.shortName.label" default="Short name" /></label>
-                            <input type="text" class="form-control" id="shortName" name="shortName" placeholder="short-name" required>
-                            <p class="help-block"><alatag:message code="profile.modal.shortName.help" default="Label used for selecting this profile in URLs and the like.  A single lower case word is preferred." /></p>
-                        </div>
-                        <div class="form-group">
-                            <label for="description"><alatag:message code="profile.modal.description.label" default="Description" /></label>
-                            <input type="text" class="form-control" id="description" name="description" placeholder="description...">
-                        </div>
-                        <div class="form-group">
-                            <label for="contactName"><alatag:message code="profile.modal.contactName.label" default="Contact Name" /></label>
-                            <input type="text" class="form-control" id="contactName" name="contactName" placeholder="Contact Name">
-                        </div>
-                        <div class="form-group">
-                            <label for="contactEmail"><alatag:message code="profile.modal.contactName.label" default="Contact Email (Optional)" /></label>
-                            <input type="email" class="form-control" id="contactEmail" name="contactEmail" placeholder="contact.email@example.org">
-                        </div>
-                    </g:form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" form="save-profile-form" class="btn btn-primary">Save changes</button>
-                </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
-    <div id="import-profile-modal" class="modal fade" tabindex="-1" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><alatag:message code="dq.admin.uploadprofile.modal.title" default="Import a profile" /></h4>
-                </div>
-                <div class="modal-body">
-                    <g:form name="import-profile-form" action="importProfile" enctype="multipart/form-data" useToken="true">
-                        <g:hiddenField name="isPublicProfile"/>
-                        <input type="file" name="filejson"/>
-                    </g:form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <button type="submit" form="import-profile-form" class="btn btn-primary">Upload</button>
+        <div id="import-profile-modal" class="modal fade" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"><alatag:message code="dq.admin.uploadprofile.modal.title" default="Import a profile" /></h4>
+                    </div>
+                    <div class="modal-body">
+                        <g:form name="import-profile-form" action="importProfile" enctype="multipart/form-data" useToken="true">
+                            <input type="file" name="filejson"/>
+                        </g:form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                        <button type="submit" form="import-profile-form" class="btn btn-primary">Upload</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -190,19 +231,6 @@
             }
         });
 
-        $('.addProfileLink, .importProfileLink').click(function() {
-            var isPublicControl = null;
-            var className = $(this).attr('class');
-
-            if (className.indexOf('addProfileLink') !== -1) {
-                isPublicControl = $('#save-profile-modal form').find('input[name=isPublicProfile]');
-            } else if (className.indexOf('importProfileLink') !== -1) {
-                isPublicControl = $('#import-profile-modal form').find('input[name=isPublicProfile]');
-            }
-
-            $(isPublicControl).val($(this).attr('data-isPublicProfile'))
-        })
-
         $('.btn-edit-profile').on('click', function(e) {
             var $this = $(this);
             var id = $this.data('id');
@@ -213,7 +241,6 @@
             var contactEmail  = $this.data('contact-email');
             var enabled = $this.data('enabled');
             var isDefault = $this.data('is-default');
-            var isPublicProfile = $this.attr('data-isPublicProfile')
 
             var $saveProfileModal = $('#save-profile-modal');
 
@@ -225,7 +252,6 @@
             var $contactEmail = $saveProfileModal.find('input[name=contactEmail]');
             var $enabled = $saveProfileModal.find('input[name=enabled]');
             var $isDefault = $saveProfileModal.find('input[name=isDefault]');
-            var $isPublicProfile = $saveProfileModal.find('input[name=isPublicProfile]');
 
             var oldId = $id.val();
             var oldName = $name.val();
@@ -244,7 +270,6 @@
             $contactEmail.val(contactEmail);
             $enabled.val(enabled);
             $isDefault.val(isDefault);
-            $isPublicProfile.val(isPublicProfile);
 
             var clearFormFn = function() {
                 $id.val(oldId);
