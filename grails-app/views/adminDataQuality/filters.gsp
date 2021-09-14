@@ -8,6 +8,9 @@
     <asset:javascript src="jquery.js" />
     <asset:javascript src="bootbox/bootbox.min.js" />
     <asset:stylesheet src="admin.css" />
+    <script type="text/javascript">
+        var options = "${options.join(',')}"
+    </script>
     <style>
     .smallpadding {
         padding-left: 5px;
@@ -150,7 +153,7 @@
                                                         <option value="Include">Include</option>
                                                         <option value="Exclude">Exclude</option>
                                                     </select>
-                                                    <g:select class="form-control filterKey" name="filterKey" id="${filter.id + '-key'}" from="${options}" value="abcd_type_status" style="width: 70%"/>
+                                                    <g:select class="form-control filterKey" name="filterKey" id="${filter.id + '-key'}" from="${options}" value="abcd_type_status" noSelection="['':'']" style="width: 70%"/>
                                                 </div>
                                                 <div class="col-md-2 smallpadding">
                                                     <g:textField class="form-control filterValue" name="filterValue" id="${filter.id + '-value'}" style="width: 100%"/>
@@ -447,6 +450,9 @@
         $(field).closest('form').find('button[type=reset]').removeClass('hidden');
     }
 
+    // get all the filed names
+    var optionset = new Set(options.split(','))
+
     function setControlValues() {
         // populate fqs
         var currentFilters = $('.current-filter');
@@ -456,19 +462,31 @@
     }
 
     function setFQGroup(fg) {
-        var fq = $(fg).data('fq');
+        var fq = String($(fg).data('fq'));
         var exclude = fq.length > 0 && fq[0] === '-';
         if (exclude) {
             fq = fq.substr(1);
         }
 
+        var count = (fq.match(/:/g)||[]).length;
         var filterKey, filterValue;
-        if (fq.length > 0) {
-            var idx = fq.indexOf(':');
-            filterKey = fq.substr(0, idx);
-            filterValue = fq.substr(idx + 1);
-        }
+        if (count === 1) {
+            if (fq.length > 0) {
+                var idx = fq.indexOf(':');
+                filterKey = fq.substr(0, idx);
 
+                // if it's a valid key
+                if (optionset.has(filterKey)) {
+                    filterValue = fq.substr(idx + 1);
+                } else {
+                    filterKey = '';
+                    filterValue = fq;
+                }
+            }
+        } else {
+            filterKey = '';
+            filterValue = fq;
+        }
         $('.exclude', $(fg)).val(exclude ? 'Exclude' : 'Include');
         $('.filterKey', $(fg)).val(filterKey);
         $('.filterValue', $(fg)).val(filterValue);
@@ -546,7 +564,7 @@
     function generateFilterValue(e) {
         var group = $(e.target).closest('.filter-row');
         var exclude = $('.exclude', group).val();
-        var filterKey = $('.filterKey', group).val();
+        var filterKey = $('.filterKey', group).find(":selected").text();
         var filterVal = $('.filterValue', group).val();
         var newFqVal = (exclude == 'Include' ? '' : '-') + filterKey + (filterKey ? ':' : '') + filterVal;
         $('.filter', group).val(newFqVal);
