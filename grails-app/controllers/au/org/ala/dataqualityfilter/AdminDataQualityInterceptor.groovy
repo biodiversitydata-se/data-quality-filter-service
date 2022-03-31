@@ -15,9 +15,9 @@ package au.org.ala.dataqualityfilter
 
 /**
  * Interceptor for Admin controller, adapted from grails 2 `beforeInterceptor` code.
- *  See {@link AdminController}
+ *  See {@link AdminDataQualityController}
  */
-class AdminInterceptor {
+class AdminDataQualityInterceptor {
     def authService
 
     boolean before() {
@@ -31,7 +31,7 @@ class AdminInterceptor {
         } else if (!authService?.userInRole(grailsApplication.config.getProperty("auth.admin_role", String, "ROLE_ADMIN"))) {
             log.debug "User not authorised to access the page: ${params.controller}/${params.action?:''}. Redirecting to index."
             flash.message = "You are not authorised to access the page: ${params.controller}/${params.action?:''}."
-            redirect(controller: "home", action: "index")
+            render(status: 403)
             false
         } else {
             true
