@@ -16,5 +16,9 @@ class UrlMappings {
         }
 
         "/$controller/$action?/$id?(.$format)?"{ }
+
+        "403"(view: "/403")
+        "404"(view: "/notFound")
+        "500"(view: "/error")
 	}
 }
