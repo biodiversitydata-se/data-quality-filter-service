@@ -161,7 +161,7 @@ headerAndFooter:
 
 security:
     cas:
-        uriFilterPattern: '/dataprofiles,/filters/*,/download.*'
+        uriFilterPattern: '/data-profiles,/filters/*,/download.*'
         authenticateOnlyIfLoggedInPattern: '/occurrences/(?!.+userAssertions|facet.+).+,/explore/your-area,/query,/proxy/download/.*'
         uriExclusionFilterPattern: '/occurrences/shapeUpload,/images.*,/css.*,/js.*,.*json,/help/.*'
 
@@ -175,15 +175,16 @@ environments:
             serverURL: "http://dev.ala.org.au:8090/data-quality"
         security:
             cas:
-                appServerName: "https://auth.ala.org.au"
+                appServerName: "http://dev.ala.org.au"
+
     test:
         security:
             cas:
-                appServerName: "https://auth.ala.org.au"
+                appServerName: "http://dev.ala.org.au"
     production:
         security:
             cas:
-                appServerName: "https://auth.ala.org.au"
+                appServerName: "http://dev.ala.org.au"
 
 biocache:
     indexedFieldsUrl: "${biocache.baseUrl}/index/fields"
