@@ -26,6 +26,7 @@ apply plugin:"war"
 apply plugin:"org.grails.grails-web"
 apply plugin:"com.bertramlabs.asset-pipeline"
 apply plugin:"org.grails.grails-gsp"
+apply plugin:"com.github.erdi.webdriver-binaries"
 apply plugin:"maven-publish"
 
 publishing {
@@ -107,11 +108,13 @@ dependencies {
     runtime "org.apache.tomcat:tomcat-jdbc"
     runtime "com.bertramlabs.plugins:asset-pipeline-grails:3.2.4"
     testCompile "org.grails:grails-gorm-testing-support"
-    testCompile "org.grails.plugins:geb"
     testCompile "org.grails:grails-web-testing-support"
-    testCompile "org.grails.plugins:geb:1.1.2"
-    testRuntime "org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1"
-    testRuntime "net.sourceforge.htmlunit:htmlunit:2.18"
+    testCompile "org.grails.plugins:geb"
+    testCompile "org.seleniumhq.selenium:selenium-remote-driver:3.14.0"
+    testCompile "org.seleniumhq.selenium:selenium-api:3.14.0"
+    testCompile "org.seleniumhq.selenium:selenium-support:3.14.0"
+    testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.14.0"
+    testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.14.0"
 
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
     compile "org.apache.commons:commons-lang3:3.7"
@@ -140,7 +143,19 @@ dependencies {
     compile "org.grails.plugins:ala-admin-plugin:2.3.0", noCache
     compile "org.grails.plugins:ala-auth:5.1.1", noCache
     compile "au.org.ala.plugins.grails:images-client-plugin:1.4", noCache
-    compile "au.org.ala.plugins.grails:ala-charts-plugin:2.0.1", noCache
+    compile "au.org.ala.plugins.grails:ala-charts-plugin:2.2", noCache
+}
+
+webdriverBinaries {
+    chromedriver '2.45.0'
+    geckodriver '0.24.0'
+}
+
+tasks.withType(Test) {
+    systemProperty "geb.env", System.getProperty('geb.env')
+    systemProperty "geb.build.reportsDir", reporting.file("geb/integrationTest")
+    systemProperty "webdriver.chrome.driver", System.getProperty('webdriver.chrome.driver')
+    systemProperty "webdriver.gecko.driver", System.getProperty('webdriver.gecko.driver')
 }
 
 bootRun {
