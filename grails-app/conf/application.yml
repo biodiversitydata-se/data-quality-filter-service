@@ -102,13 +102,18 @@ spring:
     groovy:
         template:
             check-template-location: false
-
-# Spring Actuator Endpoints are Disabled by Default
-endpoints:
-    enabled: false
     jmx:
-        enabled: true
         unique-names: true
+    devtools:
+        restart:
+            exclude:
+                - grails-app/views/**
+                - grails-app/i18n/**
+                - grails-app/conf/**
+management:
+    endpoints:
+        enabled-by-default: false
+
 
 skin:
     fluidLayout: true
@@ -161,9 +166,20 @@ headerAndFooter:
 
 security:
     cas:
-        uriFilterPattern: '/data-profiles,/filters/*,/download.*'
+        uriFilterPattern: '/data-profiles,/filters/*,/download/*'
         authenticateOnlyIfLoggedInPattern: '/occurrences/(?!.+userAssertions|facet.+).+,/explore/your-area,/query,/proxy/download/.*'
         uriExclusionFilterPattern: '/occurrences/shapeUpload,/images.*,/css.*,/js.*,.*json,/help/.*'
+        enabled: false
+    oidc:
+        enabled: true
+        discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
+        scope: openid profile email ala roles
+        clientId: 'change me'
+        secret: 'change me'
+    jwt:
+        enabled: true
+        discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
+        fallbackToLegacyBehaviour: true
 
 server:
     contextPath: '/data-quality'
