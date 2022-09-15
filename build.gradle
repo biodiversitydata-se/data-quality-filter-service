@@ -128,7 +128,6 @@ dependencies {
     // Swagger
     compile 'au.org.ala.plugins:openapi:1.1.0'
 
-    compile 'org.webjars:swagger-ui:3.28.0'
     compile "jakarta.ws.rs:jakarta.ws.rs-api:2.1.6"
 
     // load external config files

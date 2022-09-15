@@ -1,15 +1,19 @@
 package au.org.ala.dataqualityfilter
 
+import au.org.ala.plugins.openapi.Path
 import grails.converters.JSON
-//import io.swagger.annotations.Api
-//import io.swagger.annotations.ApiImplicitParam
-//import io.swagger.annotations.ApiImplicitParams
-//import io.swagger.annotations.ApiOperation
-//import io.swagger.annotations.ApiResponse
-//import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.headers.Header
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND
-import static javax.servlet.http.HttpServletResponse.SC_OK
+import javax.ws.rs.Produces
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 //@Api(value = "/api/v1/quality/", tags = ["QualityServiceRPC"], description = "Data Quality web services to support biocache-hubs functions")
 class QualityController {
@@ -19,18 +23,41 @@ class QualityController {
 
     def qualityService
 
-//    @ApiOperation(
-//            value = "Get enabled filters, grouped by category label for a given profile name",
-//            nickname = "getEnabledFiltersByLabel",
-//            produces = "application/json",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "Map")
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "getEnabledFiltersByLabel",
+            summary = "Get enabled filters, grouped by category label for a given profile name",
+            description = "Get enabled filters, grouped by category label for a given profile name",
+            parameters = [
+                    @Parameter(
+                            name = "profileName",
+                            in = QUERY,
+                            description = "Profile name",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Enabled filters",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = Object)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/getEnabledFiltersByLabel")
+    @Produces("application/json")
     def getEnabledFiltersByLabel(String profileName) {
         render qualityService.getEnabledFiltersByLabel(profileName) as JSON
     }

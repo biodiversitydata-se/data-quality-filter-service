@@ -123,23 +123,6 @@ skin:
 
 privacyPolicy: "http://www.ala.org.au/about/terms-of-use/privacy-policy/"
 
-swagger:
-    info:
-        description: "RESTful and RPC API for the Data Quality Filters service"
-        version: "${info.app.version}"
-        title: "Data Quality Services API"
-        termsOfServices: "https://www.ala.org.au/terms-of-use"
-        contact:
-            name: "Atlas Of Living Australia"
-            url: "http://www.ala.org.au"
-            email: "support@ala.org.au"
-        license:
-            name: "MPL"
-            url: 'https://www.mozilla.org/en-US/MPL/'
-    schemes:
-    - HTTPS
-    consumes:
-    - "application/json"
 
 hibernate:
     cache:
@@ -188,10 +171,10 @@ server:
 environments:
     development:
         grails:
-            serverURL: "http://dev.ala.org.au:8090/data-quality"
+            serverURL: "http://localhost:8090/data-quality"
         security:
             cas:
-                appServerName: "http://dev.ala.org.au"
+                appServerName: "http://localhost:8090"
 
     test:
         security:
