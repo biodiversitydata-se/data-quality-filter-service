@@ -1,6 +1,7 @@
 package au.org.ala.dataqualityfilter
 
 import au.org.ala.plugins.openapi.Path
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import grails.converters.JSON
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -63,101 +64,239 @@ class QualityController {
     }
     final class GetEnabledFiltersByLabelResponse extends LinkedHashMap<String, String> {}
 
-//    @ApiOperation(
-//            value = "Get Enabled Quality Filters",
-//            nickname = "getEnabledQualityFilters",
-//            produces = "application/json",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "List")
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "getEnabledQualityFilters",
+            summary = "Get Enabled Quality Filters",
+            description = "Get Enabled Quality Filters",
+            parameters = [
+                    @Parameter(
+                            name = "profileName",
+                            in = QUERY,
+                            description = "Profile name",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Enabled filters",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = String))
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/getEnabledQualityFilters")
+    @Produces("application/json")
     def getEnabledQualityFilters(String profileName) {
         render qualityService.getEnabledQualityFilters(profileName) as JSON
     }
 
     /** This class is unused other than to provides the type information for the OpenAPI definition */
-    final class GetGroupedEnabledFiltersResponse extends LinkedHashMap<String, List<QualityFilter>> {}
+    @JsonIgnoreProperties('metaClass')
+    class GetGroupedEnabledFiltersResponse extends  LinkedHashMap<String, List<QualityFilter>> {}
 
-//    @ApiOperation(
-//            value = "Get Grouped Enabled Filters",
-//            nickname = "getGroupedEnabledFilters",
-//            produces = "application/json",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = GetGroupedEnabledFiltersResponse) // , responseContainer = "Map"
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "getGroupedEnabledFilters",
+            summary = "Get Grouped Enabled Filters",
+            description = "Get Grouped Enabled Filters",
+            parameters = [
+                    @Parameter(
+                            name = "profileName",
+                            in = QUERY,
+                            description = "Profile name",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Group enabled filters",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = GetGroupedEnabledFiltersResponse)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/getGroupedEnabledFilters")
+    @Produces("application/json")
     def getGroupedEnabledFilters(String profileName) {
         render qualityService.getGroupedEnabledFilters(profileName) as JSON
     }
-//
-//    @ApiOperation(
-//            value = "Find All Enabled Categories",
-//            nickname = "findAllEnabledCategories",
-//            produces = "application/json",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = QualityCategory, responseContainer = "List")
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "findAllEnabledCategories",
+            summary = "Find All Enabled Categories",
+            description = "Find All Enabled Categories",
+            parameters = [
+                    @Parameter(
+                            name = "profileName",
+                            in = QUERY,
+                            description = "Profile name",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "All enabled Categories",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = QualityCategory)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/findAllEnabledCategories")
+    @Produces("application/json")
     def findAllEnabledCategories(String profileName) {
         render qualityService.findAllEnabledCategories(profileName) as JSON
     }
 
-//    @ApiOperation(
-//            value = "Retrieve the data profile for a given profile's short name.  If the profile doesn't exist or the short name is omitted then the default profile is returned instead.",
-//            nickname = "activeProfile",
-//            produces = "application/json",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile)
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "The profile short name", dataType = 'string')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "activeProfile",
+            summary = "Retrieve the data profile for a given profile's short name.  If the profile doesn't exist or the short name is omitted then the default profile is returned instead.",
+            description = "Retrieve the data profile for a given profile's short name.  If the profile doesn't exist or the short name is omitted then the default profile is returned instead.",
+            parameters = [
+                    @Parameter(
+                            name = "profileName",
+                            in = QUERY,
+                            description = "Profile name",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Data profile",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = QualityProfile)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/activeProfile")
+    @Produces("application/json")
     def activeProfile(String profileName) {
         render qualityService.activeProfile(profileName) as JSON
     }
 
-//    @ApiOperation(
-//            value = "Get the full filter string for a given data profile",
-//            nickname = "getJoinedQualityFilter",
-//            produces = "text/plain",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = String)
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "profileName", paramType = "query", required = false, value = "Profile name", dataType = 'string')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "getJoinedQualityFilter",
+            summary = "Get the full filter string for a given data profile",
+            description = "Get the full filter string for a given data profile",
+            parameters = [
+                    @Parameter(
+                            name = "profileName",
+                            in = QUERY,
+                            description = "Profile name",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Full filter string",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "text/plain",
+                                            schema = @Schema(implementation = String)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/getJoinedQualityFilter")
+    @Produces("text/plain")
     def getJoinedQualityFilter(String profileName) {
         render qualityService.getJoinedQualityFilter(profileName), contentType: 'text/plain'
     }
-//
-//    @ApiOperation(
-//            value = "Get the full inverse filter string for a given quality category",
-//            nickname = "getInverseCategoryFilter",
-//            produces = "text/plain",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = String)
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "qualityCategoryId", paramType = "query", required = false, value = "Quality Category Id", dataType = 'integer')
-//    ])
+
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "getInverseCategoryFilter",
+            summary = "Get the full inverse filter string for a given quality category",
+            description = "Get the full inverse filter string for a given quality category",
+            parameters = [
+                    @Parameter(
+                            name = "qualityCategoryId",
+                            in = QUERY,
+                            description = "Quality Category Id",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Full inverse filter string",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "text/plain",
+                                            schema = @Schema(implementation = String)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/getInverseCategoryFilter")
+    @Produces("text/plain")
     def getInverseCategoryFilter() {
         def result = qualityService.getInverseCategoryFilter(params.long('qualityCategoryId'))
         if (result == null) {
@@ -167,18 +306,42 @@ class QualityController {
         }
     }
 
-//    @ApiOperation(
-//            value = "Get all the inverse filter strings for a given data profile",
-//            nickname = "getAllInverseCategoryFiltersForProfile",
-//            produces = "application/json",
-//            httpMethod = "GET"
-//    )
-//    @ApiResponses([
-//            @ApiResponse(code = SC_OK, message = "OK", response = String, responseContainer = "Map")
-//    ])
-//    @ApiImplicitParams([
-//            @ApiImplicitParam(name = "qualityProfileId", paramType = "query", required = false, value = "Quality Profile Id", dataType = 'integer')
-//    ])
+    @Operation(
+            method = "GET",
+            tags = "QualityServiceRPC",
+            operationId = "getAllInverseCategoryFiltersForProfile",
+            summary = "Get all the inverse filter strings for a given data profile",
+            description = "Get all the inverse filter strings for a given data profile",
+            parameters = [
+                    @Parameter(
+                            name = "qualityProfileId",
+                            in = QUERY,
+                            description = "Quality Profile Id",
+                            schema = @Schema(implementation = String),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "Full inverse filter string",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = Map)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
+    )
+    @Path("/api/v1/quality/getAllInverseCategoryFiltersForProfile")
+    @Produces("application/json")
+
     def getAllInverseCategoryFiltersForProfile() {
         def result = qualityService.getAllInverseCategoryFilters(params.long('qualityProfileId'))
         render result as JSON
