@@ -164,6 +164,19 @@ security:
         discoveryUri: https://auth-test.ala.org.au/cas/oidc/.well-known
         fallbackToLegacyBehaviour: true
 
+openapi:
+    title: Data Quality Filter REST services
+    description: REST services for interacting with the data-quality-filter-service webapp
+    terms: https://www.ala.org.au/terms
+    contact:
+        name: Support
+        email: support@ala.org.au
+    license:
+        name: Mozilla Public License 1.1
+        url: https://www.mozilla.org/en-US/MPL/1.1/
+    version: '@info.app.version@'
+    cachetimeoutms: 0
+
 server:
     contextPath: '/data-quality'
     port: 8090
