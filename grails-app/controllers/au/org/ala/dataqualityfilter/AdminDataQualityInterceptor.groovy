@@ -22,8 +22,14 @@ class AdminDataQualityInterceptor {
 
     boolean before() {
 
-        if (!grailsApplication.config.security.oidc.enabled.toBoolean()) {
-            // Standard Grails config - bypass
+        if (grailsApplication.config.security.oidc && !grailsApplication.config.security.oidc.enabled.toBoolean()) {
+            // Standard Grails oidc config - bypass
+            true
+        } else if (!grailsApplication.config.getProperty("security.cas.casServerName") && grailsApplication.config.getProperty('security.cas.bypass', Boolean, false)) {
+            // Standard Grails cas config - bypass
+            true
+        } else if (!grailsApplication.config.getProperty("casServerName") && grailsApplication.config.getProperty("disableCAS", Boolean, false)) {
+            // old-style AUTH config - bypass
             true
         } else if (!authService?.userInRole(grailsApplication.config.getProperty("auth.admin_role", String, "ROLE_ADMIN"))) {
             log.debug "User not authorised to access the page: ${params.controller}/${params.action?:''}. Redirecting to index."
