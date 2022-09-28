@@ -1,6 +1,7 @@
 package au.org.ala.dataqualityfilter
 
 import au.org.ala.plugins.openapi.Path
+import grails.converters.JSON
 import grails.rest.RestfulController
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -77,8 +78,8 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
     )
     @Path("/api/v1/data-profiles/{profileId}/categories")
     @Produces("application/json")
-    def index(Integer max) {
-        super.index(max)
+    def index() {
+        render listAllResources(params) as JSON
     }
 
     @Operation(
@@ -124,6 +125,6 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
     @Path("/api/v1/data-profiles/{profileId}/categories/{id}")
     @Produces("application/json")
     def show() {
-        super.show()
+        render queryForResource(params.id) as JSON
     }
 }
