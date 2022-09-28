@@ -17,6 +17,7 @@ import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 class QualityFilterController extends RestfulController<QualityFilter> {
 
+    static responseFormats = ['json']
     def qualityService
 
     QualityFilterController() {
