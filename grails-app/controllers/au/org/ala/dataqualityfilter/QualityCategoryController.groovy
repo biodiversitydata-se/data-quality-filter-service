@@ -1,16 +1,22 @@
 package au.org.ala.dataqualityfilter
 
+import au.org.ala.plugins.openapi.Path
+import grails.converters.JSON
 import grails.rest.RestfulController
-import io.swagger.annotations.Api
-import io.swagger.annotations.ApiImplicitParam
-import io.swagger.annotations.ApiImplicitParams
-import io.swagger.annotations.ApiOperation
-import io.swagger.annotations.ApiResponse
-import io.swagger.annotations.ApiResponses
+import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
+import io.swagger.v3.oas.annotations.headers.Header
+import io.swagger.v3.oas.annotations.media.ArraySchema
+import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.Schema
+import io.swagger.v3.oas.annotations.responses.ApiResponse
 
-import static javax.servlet.http.HttpServletResponse.SC_OK
+import javax.ws.rs.Produces
 
-@Api(value = "/api/v1/data-profiles/{profileId}/", tags = ["categories"], description = "Data Quality RESTful API for Quality Categories")
+
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH
+import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
+
 class QualityCategoryController extends RestfulController<QualityCategory> {
 
     static responseFormats = ['json']
@@ -30,37 +36,95 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
         return qualityService.findCategoriesByProfile(params.qualityProfileId)
     }
 
-    @ApiOperation(
-            value = "List all quality categories",
-            nickname = "categories",
-            produces = "application/json",
-            httpMethod = "GET"
+    @Operation(
+            method = "GET",
+            tags = "categories",
+            operationId = "getQualityCategories",
+            summary = "List all quality categories",
+            description = "List all quality categories",
+            parameters = [
+                    @Parameter(
+                            name = "profileId",
+                            in = PATH,
+                            description = "The id or short name for the quality profile or default for the default profile",
+                            schema = @Schema(implementation = String),
+                            required = true
+                    ),
+                    @Parameter(
+                            name = "max",
+                            in = QUERY,
+                            description = "Maximum results to return",
+                            schema = @Schema(implementation = Boolean),
+                            required = false
+                    )
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "List of quality categories",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            array = @ArraySchema(schema = @Schema(implementation = QualityCategory))
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
     )
-    @ApiResponses([
-            @ApiResponse(code = SC_OK, message = "OK", response = QualityCategory, responseContainer = "List")
-    ])
-    @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileId", paramType = "path", required = false, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string'),
-            @ApiImplicitParam(name = "max", paramType = "query", required = false, value = "Maximum results to return", dataType = 'integer')
-    ])
-    def index(Integer max) {
-        super.index(max)
+    @Path("/api/v1/data-profiles/{profileId}/categories")
+    @Produces("application/json")
+    def index() {
+        render listAllResources(params) as JSON
     }
 
-    @ApiOperation(
-            value = "Retrieve a single quality category",
-            nickname = "categories/{id}",
-            produces = "application/json",
-            httpMethod = "GET"
+    @Operation(
+            method = "GET",
+            tags = "categories",
+            operationId = "getQualityCategory",
+            summary = "Retrieve a single quality category",
+            description = "Retrieve a single quality category",
+            parameters = [
+                    @Parameter(
+                            name = "profileId",
+                            in = PATH,
+                            description = "The id or short name for the quality profile or default for the default profile",
+                            schema = @Schema(implementation = String),
+                            required = true
+                    ),
+                    @Parameter(
+                            name = "id",
+                            in = PATH,
+                            description = "The id for the quality category",
+                            schema = @Schema(implementation = String),
+                            required = true
+                    ),
+            ],
+            responses = [
+                    @ApiResponse(
+                            description = "A quality category",
+                            responseCode = "200",
+                            content = [
+                                    @Content(
+                                            mediaType = "application/json",
+                                            schema = @Schema(implementation = QualityProfile)
+                                    )
+                            ],
+                            headers = [
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                            ]
+                    )
+            ]
     )
-    @ApiResponses([
-            @ApiResponse(code = SC_OK, message = "OK", response = QualityProfile, responseContainer = "List")
-    ])
-    @ApiImplicitParams([
-            @ApiImplicitParam(name = "profileId", paramType = "path", required = false, value = "The id or short name for the quality profile or default for the default profile", dataType = 'string'),
-            @ApiImplicitParam(name = "id", paramType = "path", required = false, value = "The id for the quality category", dataType = 'integer')
-    ])
+    @Path("/api/v1/data-profiles/{profileId}/categories/{id}")
+    @Produces("application/json")
     def show() {
-        super.show()
+        render queryForResource(params.id) as JSON
     }
 }
