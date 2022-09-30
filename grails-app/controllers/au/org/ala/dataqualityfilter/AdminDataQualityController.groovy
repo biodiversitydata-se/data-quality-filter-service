@@ -39,6 +39,7 @@ class AdminDataQualityController {
         respond QualityProfile.list(sort: 'id'), model: ['errors': flash.errors]
     }
 
+
     def saveProfile(QualityProfile qualityProfile) {
         def invalidReq = false
         withForm {
@@ -69,6 +70,7 @@ class AdminDataQualityController {
         }
     }
 
+    @Transactional
     def enableQualityProfile() {
         withForm {
             def qp = QualityProfile.get(params.long('id'))
@@ -129,7 +131,7 @@ class AdminDataQualityController {
             }
         }
     }
-
+    @Transactional
     def enableQualityCategory() {
         def qc = QualityCategory.get(params.long('id'))
         withForm {
@@ -212,6 +214,7 @@ class AdminDataQualityController {
         redirect(action: 'filters', id: profileId)
     }
 
+    @Transactional
     def enableQualityFilter() {
         def qf = QualityFilter.get(params.long('id'))
         withForm {

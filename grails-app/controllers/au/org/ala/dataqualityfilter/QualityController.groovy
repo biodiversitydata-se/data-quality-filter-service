@@ -274,7 +274,7 @@ class QualityController {
                             in = QUERY,
                             description = "Quality Category Id",
                             schema = @Schema(implementation = String),
-                            required = false
+                            required = true
                     )
             ],
             responses = [
