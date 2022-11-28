@@ -15,7 +15,6 @@ import javax.ws.rs.Produces
 
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 class QualityCategoryController extends RestfulController<QualityCategory> {
 
@@ -38,24 +37,18 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
 
     @Operation(
             method = "GET",
-            tags = "categories",
+            tags = "Categories",
             operationId = "getQualityCategories",
-            summary = "List all quality categories",
-            description = "List all quality categories",
+            summary = "List all quality categories from a profile",
+            description = "List all available data quality categories for a specified quality profile",
             parameters = [
                     @Parameter(
                             name = "profileId",
                             in = PATH,
                             description = "The id or short name for the quality profile or default for the default profile",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = true
-                    ),
-                    @Parameter(
-                            name = "max",
-                            in = QUERY,
-                            description = "Maximum results to return",
-                            schema = @Schema(implementation = Boolean),
-                            required = false
                     )
             ],
             responses = [
@@ -84,16 +77,17 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
 
     @Operation(
             method = "GET",
-            tags = "categories",
+            tags = "Categories",
             operationId = "getQualityCategory",
-            summary = "Retrieve a single quality category",
-            description = "Retrieve a single quality category",
+            summary = "Retrieve a single quality category form a profile",
+            description = "Retrieve a single quality category for a specified quality category id",
             parameters = [
                     @Parameter(
                             name = "profileId",
                             in = PATH,
                             description = "The id or short name for the quality profile or default for the default profile",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = true
                     ),
                     @Parameter(
@@ -101,6 +95,7 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
                             in = PATH,
                             description = "The id for the quality category",
                             schema = @Schema(implementation = String),
+                            example = "442",
                             required = true
                     ),
             ],
