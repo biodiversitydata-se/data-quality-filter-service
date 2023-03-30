@@ -84,6 +84,7 @@ dependencies {
     implementation "org.grails:grails-plugin-url-mappings"
     implementation "org.grails:grails-plugin-interceptors"
     implementation "org.grails.plugins:cache"
+    implementation "org.grails.plugins:cache-ehcache:3.0.0"
     implementation "org.grails.plugins:async"
     implementation "org.grails.plugins:scaffolding"
     implementation "org.grails.plugins:events"
@@ -122,7 +123,7 @@ dependencies {
     implementation "jakarta.ws.rs:jakarta.ws.rs-api:2.1.6"
 
     // load external config files
-    implementation 'org.grails.plugins:external-config:2.0.0'
+    implementation 'dk.glasius:external-config:3.1.1'
     // for CSV parsing
     implementation "net.sf.supercsv:super-csv:2.1.0"
     implementation 'org.grails.plugins:http-builder-helper:1.0.2.ALA'
