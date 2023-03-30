@@ -139,7 +139,7 @@ dependencies {
 
     // ALA Plugins
     compile "org.grails.plugins:ala-bootstrap3:4.1.0", noCache
-    compile "au.org.ala.plugins.grails:downloads-plugin:3.0-SNAPSHOT", noCache
+    compile "au.org.ala.plugins.grails:downloads-plugin:3.0", noCache
     compile "org.grails.plugins:ala-admin-plugin:2.3.0", noCache
     compile "org.grails.plugins:ala-auth:5.1.1", noCache
     compile "au.org.ala.plugins.grails:images-client-plugin:1.4", noCache

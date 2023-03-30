@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 import javax.ws.rs.Produces
 
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 class QualityFilterController extends RestfulController<QualityFilter> {
 
@@ -37,16 +36,17 @@ class QualityFilterController extends RestfulController<QualityFilter> {
 
     @Operation(
             method = "GET",
-            tags = "filters",
+            tags = "Filters",
             operationId = "getQualityFilters",
-            summary = "List all quality filters",
-            description = "List all quality filters",
+            summary = "List all quality filters from a category",
+            description = "List all quality filters for a specified quality profile and quality category",
             parameters = [
                     @Parameter(
                             name = "profileId",
                             in = PATH,
                             description = "The id or short name for the quality profile or default for the default profile",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = true
                     ),
                     @Parameter(
@@ -54,14 +54,8 @@ class QualityFilterController extends RestfulController<QualityFilter> {
                             in = PATH,
                             description = "The id for the quality category",
                             schema = @Schema(implementation = String),
+                            example = "444",
                             required = true
-                    ),
-                    @Parameter(
-                            name = "max",
-                            in = QUERY,
-                            description = "Maximum results to return",
-                            schema = @Schema(implementation = Integer),
-                            required = false
                     )
             ],
             responses = [
@@ -90,16 +84,17 @@ class QualityFilterController extends RestfulController<QualityFilter> {
 
     @Operation(
             method = "GET",
-            tags = "filters",
+            tags = "Filters",
             operationId = "getQualityFilter",
-            summary = "Retrieve a single quality filter",
-            description = "Retrieve a single quality filter",
+            summary = "Retrieve a single quality filter from a category",
+            description = "Retrieve a single quality filter for a specified quality filter id",
             parameters = [
                     @Parameter(
                             name = "profileId",
                             in = PATH,
                             description = "The id or short name for the quality profile or default for the default profile",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = true
                     ),
                     @Parameter(
@@ -107,6 +102,7 @@ class QualityFilterController extends RestfulController<QualityFilter> {
                             in = PATH,
                             description = "The id for the quality category",
                             schema = @Schema(implementation = String),
+                            example = "444",
                             required = true
                     ),
                     @Parameter(
@@ -114,6 +110,7 @@ class QualityFilterController extends RestfulController<QualityFilter> {
                             in = PATH,
                             description = "The id for the quality filter",
                             schema = @Schema(implementation = String),
+                            example = "445",
                             required = true
                     )
             ],
