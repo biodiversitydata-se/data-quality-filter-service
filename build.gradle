@@ -62,7 +62,7 @@ configurations {
     }
 }
 
-def alaSecurityLibsVersion='6.0.0-SNAPSHOT'
+def alaSecurityLibsVersion='6.0.0'
 
 dependencies {
     def noCache = {
