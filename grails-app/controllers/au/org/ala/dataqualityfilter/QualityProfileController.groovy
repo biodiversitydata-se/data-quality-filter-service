@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.headers.Header
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
+import io.swagger.v3.oas.annotations.media.ExampleObject
 import io.swagger.v3.oas.annotations.media.Schema
 import io.swagger.v3.oas.annotations.responses.ApiResponse
 
@@ -41,16 +42,17 @@ class QualityProfileController extends RestfulController<QualityProfile> {
 
     @Operation(
             method = "GET",
-            tags = "data-profiles",
+            tags = "Profiles",
             operationId = "getQualityProfiles",
-            summary = "List all quality profiles",
-            description = "List all quality profiles",
+            summary = "List all data quality profiles",
+            description = "List all available data quality profiles as per applied filters",
             parameters = [
                     @Parameter(
                             name = "max",
                             in = QUERY,
                             description = "Maximum results to return",
                             schema = @Schema(implementation = Integer),
+                            example = "2",
                             required = false
                     ),
                     @Parameter(
@@ -58,6 +60,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
                             in = QUERY,
                             description = "Offset results by",
                             schema = @Schema(implementation = Integer),
+                            example = "0",
                             required = false
                     ),
                     @Parameter(
@@ -65,6 +68,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
                             in = QUERY,
                             description = "Property to sort results by",
                             schema = @Schema(implementation = String),
+                            example = "id",
                             required = false
                     ),
                     @Parameter(
@@ -72,6 +76,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
                             in = QUERY,
                             description = "Direction to sort results by",
                             schema = @Schema(implementation = String),
+                            example = "desc",
                             required = false
                     ),
                     @Parameter(
@@ -79,6 +84,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
                             in = QUERY,
                             description = "Only return enabled profiles",
                             schema = @Schema(implementation = Boolean),
+                            example = "true",
                             required = false
                     ),
                     @Parameter(
@@ -86,6 +92,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
                             in = QUERY,
                             description = "Search for profiles by name",
                             schema = @Schema(implementation = String),
+                            example = "ALA General",
                             required = false
                     ),
                     @Parameter(
@@ -93,6 +100,7 @@ class QualityProfileController extends RestfulController<QualityProfile> {
                             in = QUERY,
                             description = "Search for profiles by short name",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = false
                     )
             ],
@@ -122,16 +130,17 @@ class QualityProfileController extends RestfulController<QualityProfile> {
 
     @Operation(
             method = "GET",
-            tags = "data-profiles",
+            tags = "Profiles",
             operationId = "getQualityProfile",
             summary = "Retrieve a single quality profile",
-            description = "Retrieve a single quality profile",
+            description = "Retrieve a single quality profile based on the specified profile id",
             parameters = [
                     @Parameter(
                             name = "id",
                             in = PATH,
                             description = "The id or short name for the quality profile or default for the default profile",
                             schema = @Schema(implementation = String),
+                            example = "441",
                             required = true
                     )
             ],

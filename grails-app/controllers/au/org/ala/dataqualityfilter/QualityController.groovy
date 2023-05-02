@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse
 
 import javax.ws.rs.Produces
 
-import static io.swagger.v3.oas.annotations.enums.ParameterIn.PATH
 import static io.swagger.v3.oas.annotations.enums.ParameterIn.QUERY
 
 //@Api(value = "/api/v1/quality/", tags = ["QualityServiceRPC"], description = "Data Quality web services to support biocache-hubs functions")
@@ -26,7 +25,7 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Filters",
             operationId = "getEnabledFiltersByLabel",
             summary = "Get enabled filters, grouped by category label for a given profile name",
             description = "Get enabled filters, grouped by category label for a given profile name",
@@ -36,6 +35,7 @@ class QualityController {
                             in = QUERY,
                             description = "Profile name",
                             schema = @Schema(implementation = String),
+                            example = "ALA General",
                             required = false
                     )
             ],
@@ -66,7 +66,7 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Filters",
             operationId = "getEnabledQualityFilters",
             summary = "Get Enabled Quality Filters",
             description = "Get Enabled Quality Filters",
@@ -76,6 +76,7 @@ class QualityController {
                             in = QUERY,
                             description = "Profile name",
                             schema = @Schema(implementation = String),
+                            example = "ALA General",
                             required = false
                     )
             ],
@@ -109,7 +110,7 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Filters",
             operationId = "getGroupedEnabledFilters",
             summary = "Get Grouped Enabled Filters",
             description = "Get Grouped Enabled Filters",
@@ -119,6 +120,7 @@ class QualityController {
                             in = QUERY,
                             description = "Profile name",
                             schema = @Schema(implementation = String),
+                            example = "ALA General",
                             required = false
                     )
             ],
@@ -147,16 +149,17 @@ class QualityController {
     }
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Categories",
             operationId = "findAllEnabledCategories",
             summary = "Find All Enabled Categories",
-            description = "Find All Enabled Categories",
+            description = "Find All Enabled Categories for a specified profile",
             parameters = [
                     @Parameter(
                             name = "profileName",
                             in = QUERY,
                             description = "Profile name",
                             schema = @Schema(implementation = String),
+                            example =  "ALA General",
                             required = false
                     )
             ],
@@ -186,9 +189,9 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Profiles",
             operationId = "activeProfile",
-            summary = "Retrieve the data profile for a given profile's short name.  If the profile doesn't exist or the short name is omitted then the default profile is returned instead.",
+            summary = "Retrieve the data profile for a given profile's short name",
             description = "Retrieve the data profile for a given profile's short name.  If the profile doesn't exist or the short name is omitted then the default profile is returned instead.",
             parameters = [
                     @Parameter(
@@ -196,6 +199,7 @@ class QualityController {
                             in = QUERY,
                             description = "Profile name",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = false
                     )
             ],
@@ -225,7 +229,7 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Profiles",
             operationId = "getJoinedQualityFilter",
             summary = "Get the full filter string for a given data profile",
             description = "Get the full filter string for a given data profile",
@@ -235,6 +239,7 @@ class QualityController {
                             in = QUERY,
                             description = "Profile name",
                             schema = @Schema(implementation = String),
+                            example = "ALA",
                             required = false
                     )
             ],
@@ -264,16 +269,17 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Categories",
             operationId = "getInverseCategoryFilter",
             summary = "Get the full inverse filter string for a given quality category",
-            description = "Get the full inverse filter string for a given quality category",
+            description = "Get the full inverse filter string for a given quality category. Results for the default profile will be returned if qualityProfileId is omitted",
             parameters = [
                     @Parameter(
                             name = "qualityCategoryId",
                             in = QUERY,
                             description = "Quality Category Id",
                             schema = @Schema(implementation = String),
+                            example = "441",
                             required = true
                     )
             ],
@@ -308,16 +314,17 @@ class QualityController {
 
     @Operation(
             method = "GET",
-            tags = "QualityServiceRPC",
+            tags = "Profiles",
             operationId = "getAllInverseCategoryFiltersForProfile",
             summary = "Get all the inverse filter strings for a given data profile",
-            description = "Get all the inverse filter strings for a given data profile",
+            description = "Get all the inverse filter strings for a given data profile. Results for the default profile will be returned if qualityProfileId is omitted",
             parameters = [
                     @Parameter(
                             name = "qualityProfileId",
                             in = QUERY,
                             description = "Quality Profile Id",
                             schema = @Schema(implementation = String),
+                            example = "441",
                             required = false
                     )
             ],
