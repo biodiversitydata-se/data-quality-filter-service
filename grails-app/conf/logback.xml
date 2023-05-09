@@ -11,6 +11,9 @@
         </encoder>
     </appender>
 
+    <!-- These are produced by internal grails components and we don't need these logged in production -->
+    <logger name="org.hibernate.orm.deprecation" level="OFF" />
+
     <root level="warn">
         <appender-ref ref="STDOUT" />
     </root>
