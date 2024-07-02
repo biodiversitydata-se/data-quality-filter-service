@@ -62,9 +62,9 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
                                     )
                             ],
                             headers = [
-                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
-                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
-                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "string")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "string")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "string"))
                             ]
                     )
             ]
@@ -91,7 +91,7 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
                             required = true
                     ),
                     @Parameter(
-                            name = "id",
+                            name = "categoryId",
                             in = PATH,
                             description = "The id for the quality category",
                             schema = @Schema(implementation = String),
@@ -110,14 +110,14 @@ class QualityCategoryController extends RestfulController<QualityCategory> {
                                     )
                             ],
                             headers = [
-                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "String")),
-                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "String")),
-                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "String"))
+                                    @Header(name = 'Access-Control-Allow-Headers', description = "CORS header", schema = @Schema(type = "string")),
+                                    @Header(name = 'Access-Control-Allow-Methods', description = "CORS header", schema = @Schema(type = "string")),
+                                    @Header(name = 'Access-Control-Allow-Origin', description = "CORS header", schema = @Schema(type = "string"))
                             ]
                     )
             ]
     )
-    @Path("/api/v1/data-profiles/{profileId}/categories/{id}")
+    @Path("/api/v1/data-profiles/{profileId}/categories/{categoryId}")
     @Produces("application/json")
     def show() {
         render queryForResource(params.id) as JSON
