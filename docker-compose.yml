@@ -20,7 +20,7 @@ services:
     volumes:
       - ./sbdi/data/config/data-quality-filter-service-config.properties:/data/data-quality-filter-service/config/data-quality-filter-service-config.properties
     ports:
-      - "8080:8080"
+      - "8082:8082"
 
 volumes:
   db_data_data-quality-filter-service:
