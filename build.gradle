@@ -1,5 +1,5 @@
 buildscript {
-    version "2.0.0-SNAPSHOT"
+    version "3.0.0-SNAPSHOT"
     group "au.org.ala"
 }
 
@@ -20,7 +20,7 @@ plugins {
 }
 
 publishing {
-    targetCompatibility = 1.11
+    targetCompatibility = 17
     repositories {
         maven {
             name 'Nexus'
@@ -34,8 +34,16 @@ publishing {
     publications {
         mavenJar(MavenPublication) {
             artifact bootWar
+            artifact bootJar
         }
     }
+}
+
+bootJar {
+    enabled = true
+    classifier = 'exec'
+    launchScript()
+    dependsOn(compileGroovyPages)
 }
 
 repositories {
