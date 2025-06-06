@@ -1,5 +1,5 @@
 buildscript {
-    version "2.0.0"
+    version "3.0.0-SNAPSHOT"
     group "au.org.ala"
 }
 
@@ -20,7 +20,7 @@ plugins {
 }
 
 publishing {
-    targetCompatibility = 1.11
+    targetCompatibility = 17
     repositories {
         maven {
             name 'Nexus'
@@ -34,8 +34,16 @@ publishing {
     publications {
         mavenJar(MavenPublication) {
             artifact bootWar
+            artifact bootJar
         }
     }
+}
+
+bootJar {
+    enabled = true
+    classifier = 'exec'
+    launchScript()
+    dependsOn(compileGroovyPages)
 }
 
 repositories {
@@ -134,11 +142,8 @@ dependencies {
 
     // ALA Plugins
     implementation "org.grails.plugins:ala-bootstrap3:4.4.0", noCache
-    implementation "au.org.ala.plugins.grails:downloads-plugin:3.1", noCache
     implementation "org.grails.plugins:ala-admin-plugin:2.3.0", noCache
     implementation "org.grails.plugins:ala-auth:$alaSecurityLibsVersion", noCache
-    implementation "au.org.ala.plugins.grails:images-client-plugin:1.4", noCache
-    implementation "au.org.ala.plugins.grails:ala-charts-plugin:2.2", noCache
 
     implementation 'org.liquibase:liquibase-core:4.20.0'
     implementation('org.grails.plugins:database-migration:4.2.0') {
